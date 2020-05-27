@@ -1,3 +1,4 @@
+package main.java;
 import bagel.Image;
 
 public class Tank extends Tower {
@@ -27,4 +28,9 @@ public class Tank extends Tower {
     public Image getTankImage() {
         return tankImage;
     }
+
+    public int getCost() {
+        return cost;
+    }
+
 }

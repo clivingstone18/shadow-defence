@@ -1,3 +1,5 @@
+package main.java;
+
 import bagel.Image;
 
 public abstract class Tower {
@@ -8,43 +10,7 @@ public abstract class Tower {
     private Image tankImage;
     private int cost;
 
-    public int getEffectRadius() {
-        return effectRadius;
-    }
+    public abstract Image getTankImage();
+    public abstract int getCost();
 
-    public void setEffectRadius(int effectRadius) {
-        this.effectRadius = effectRadius;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(int cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public Image getProjectileImage() {
-        return projectileImage;
-    }
-
-    public void setProjectileImage(Image projectileImage) {
-        this.projectileImage = projectileImage;
-    }
-
-    public Image getTankImage() {
-        return tankImage;
-    }
-
-    public void setTankImage(Image tankImage) {
-        this.tankImage = tankImage;
-    }
 }

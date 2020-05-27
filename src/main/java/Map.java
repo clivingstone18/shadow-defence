@@ -1,3 +1,4 @@
+package main.java;
 import bagel.Window;
 import bagel.map.TiledMap;
 import bagel.util.Point;

@@ -1,26 +1,34 @@
+package main.java;
+
 import bagel.*;
 import bagel.util.Vector2;
+import bagel.Window;
 
 class ShadowDefend extends AbstractGame {
 
     private Wave wave;
     private Map map;
     private buyPanel buyPanel;
-    private int funds;
+    private statusPanel statusPanel;
+    private int playerFunds;
+    private Font font;
 
     public ShadowDefend() {
         wave = new Wave();
         map = new Map();
-        funds = 500;
+        playerFunds = 500;
+        buyPanel = new buyPanel();
+        statusPanel = new statusPanel();
+        font = new Font("res/fonts/DejaVuSans-Bold.ttf", 18);
     }
 
     @Override
     protected void update(Input input) {
-        buyPanel.render();
-
-
-        //renders the map
         map.render();
+        buyPanel.render();
+        buyPanel.updateBuyPanel(playerFunds);
+        statusPanel.render();
+        //renders the map
         //checks for input to begin wave
         if (input.wasPressed(Keys.S) && !wave.isHappening()) {
             wave.Start();

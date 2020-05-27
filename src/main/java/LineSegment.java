@@ -1,3 +1,4 @@
+package main.java;
 import java.lang.Math;
 import static java.lang.Math.min;
 import static java.lang.Math.max;

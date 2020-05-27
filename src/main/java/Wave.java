@@ -1,3 +1,4 @@
+package main.java;
 import bagel.util.Point;
 import bagel.DrawOptions;
 import java.util.List;

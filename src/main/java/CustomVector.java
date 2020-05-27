@@ -1,3 +1,4 @@
+package main.java;
 import bagel.util.Vector2;
 import java.lang.Math;
 //extension of bagel vector class to allow calculation of angle between vectors

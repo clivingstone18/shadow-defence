@@ -1,3 +1,4 @@
+package main.java;
 import bagel.Image;
 import bagel.util.Point;
 import java.util.List;
