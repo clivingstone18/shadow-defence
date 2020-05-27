@@ -27,7 +27,7 @@ class ShadowDefend extends AbstractGame {
         map.render();
         buyPanel.render();
         buyPanel.updateBuyPanel(playerFunds);
-        statusPanel.render();
+        statusPanel.render(1, 0.8, "Wave in Progress", 25);
         //renders the map
         //checks for input to begin wave
         if (input.wasPressed(Keys.S) && !wave.isHappening()) {
