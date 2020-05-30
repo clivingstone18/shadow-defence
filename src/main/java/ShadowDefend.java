@@ -2,59 +2,121 @@ package main.java;
 
 import bagel.*;
 import bagel.util.Vector2;
-import bagel.Window;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.io.File;
+import java.util.Scanner;
 
 class ShadowDefend extends AbstractGame {
 
-    private Wave wave;
     private Map map;
     private buyPanel buyPanel;
     private statusPanel statusPanel;
     private int playerFunds;
+    private int lives;
+    private int currWaveIndex;
+    private Wave wave;
     private Font font;
+    public static double timescaleMultiplier;
+    private List<Wave> waveEvents;
+
+    public static double getTimescale() {
+        return timescaleMultiplier;
+    }
+
+    //reads the waves from the text file
+    public List<Wave> readWaveEvents(String filename) {
+        waveEvents = new ArrayList<>();
+        try {
+            File files = new File(filename);
+            Scanner myReader = new Scanner(files);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                String[] dataArr = data.split(",");
+                int waveNo = Integer.parseInt(dataArr[0]);
+                //creates new spawning event
+                if (dataArr[1].equals("spawn")) {
+                    int slicerCount = Integer.parseInt(dataArr[2]);
+                    String enemyType = dataArr[3];
+                    int delay = Integer.parseInt(dataArr[4]);
+                    spawnWave spawnWave = new spawnWave(waveNo, slicerCount, enemyType, delay);
+                    waveEvents.add(spawnWave);
+                }
+                //creates new delay event
+                else {
+                    int delay = Integer.parseInt(dataArr[2]);
+                    delayWave delayWave = new delayWave(delay/timescaleMultiplier);
+                    waveEvents.add(delayWave);
+                }
+            }
+            myReader.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Could not read file");
+            e.printStackTrace();
+        }
+        return waveEvents;
+    }
 
     public ShadowDefend() {
-        wave = new Wave();
         map = new Map();
         playerFunds = 500;
         buyPanel = new buyPanel();
         statusPanel = new statusPanel();
         font = new Font("res/fonts/DejaVuSans-Bold.ttf", 18);
+        //read in files
+        currWaveIndex = 0;
+        timescaleMultiplier = 1;
+        lives = 25;
+        waveEvents = readWaveEvents("res/levels/waves.txt");
     }
 
     @Override
     protected void update(Input input) {
+        //basic rendering
         map.render();
         buyPanel.render();
         buyPanel.updateBuyPanel(playerFunds);
-        statusPanel.render(1, 0.8, "Wave in Progress", 25);
-        //renders the map
-        //checks for input to begin wave
-        if (input.wasPressed(Keys.S) && !wave.isHappening()) {
-            wave.Start();
-        } else if (wave.isHappening()) {
-            //detects keyboard input for changes to timescalemultiplier value
-            if (input.wasPressed(Keys.K) || input.wasPressed(Keys.L)) {
-                double prevTSM = wave.getTimescaleMultiplier();
-                if (input.wasPressed(Keys.L)) {
-                    wave.setTimescaleMultiplier(prevTSM + 1);
-                } else {
-                    if (prevTSM > 1) {
-                        wave.setTimescaleMultiplier(prevTSM - 1);
-                    }
-                }
-                for (Slicer slicer : wave.getActiveSlicers()) {
-                    if (slicer != null) {
-                        //update vectors to account for magnitude
-                        Vector2 prevDirVec = slicer.getDirVec();
-                        slicer.setDirVec(prevDirVec.mul(wave.getTimescaleMultiplier()/prevTSM));
-                    }
+        statusPanel.render(currWaveIndex + 1, timescaleMultiplier,
+                "Wave in Progress", lives);
+
+        //starts the game
+        if (input.wasPressed(Keys.S) && !waveEvents.get(0).isHappening()) {
+            waveEvents.get(0).Start();
+        }
+
+        //update timescale multiplier
+        if (input.wasPressed(Keys.K) || input.wasPressed(Keys.L)) {
+            if (input.wasPressed(Keys.L)) {
+                timescaleMultiplier++;
+            } else {
+                if (timescaleMultiplier > 1) {
+                    timescaleMultiplier--;
                 }
             }
-            //updates the wave ready for the next update
-            wave.Update();
+        }
+
+        //array of events
+        for (int i = 0; i < waveEvents.size() - 1; i++) {
+
+            //checks if wave is in progress
+            if (waveEvents.get(i).isHappening()) {
+                if (waveEvents.get(i).getDuration() <= waveEvents.get(i).getCurrTime()) {
+                    if (!waveEvents.get(i + 1).isHappening()) {
+                        waveEvents.get(i + 1).Start();
+                    }
+                }
+                waveEvents.get(i).Update();
+            }
+            else if (waveEvents.get(i).hasFinished()) {
+                waveEvents.remove(waveEvents.get(i));
+            }
         }
     }
+
 
     public static void main(String[] args) {
         new ShadowDefend().run();
