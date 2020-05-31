@@ -1,5 +1,7 @@
 package main.java;
 import bagel.Image;
+import bagel.util.Point;
+import bagel.util.Rectangle;
 
 public class Tank extends Tower {
     int effectRadius = 100;
@@ -8,6 +10,10 @@ public class Tank extends Tower {
     int cost = 250;
     Image projectileImage = new Image("res/images/tank_projectile.png");
     Image tankImage = new Image("res/images/tank.png");
+
+    public Tank(Point point, String imageSrc) {
+        super(point, imageSrc);
+    }
 
     public int getEffectRadius() {
         return effectRadius;
@@ -32,5 +38,6 @@ public class Tank extends Tower {
     public int getCost() {
         return cost;
     }
+
 
 }

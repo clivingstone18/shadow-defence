@@ -1,6 +1,7 @@
 package main.java;
 
 public class delayWave extends Wave {
+    private int waveNo;
     private double duration;
     private double current;
     private boolean isHappening;
@@ -19,8 +20,13 @@ public class delayWave extends Wave {
         }
     }
 
-    public delayWave(double duration) {
+    public delayWave(double duration, int WaveNo) {
         this.duration = duration/1000;
+        this.waveNo = WaveNo;
+    }
+
+    public int getWaveNo() {
+        return waveNo;
     }
 
 

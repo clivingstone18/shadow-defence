@@ -29,6 +29,9 @@ public class spawnWave extends Wave {
         return currTime;
     }
 
+    public int getWaveNo() {
+        return waveNo;
+    }
     //constructors
     public spawnWave(int waveNo, int slicerCount, String enemyType, double delay) {
         this.waveNo = waveNo;

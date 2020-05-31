@@ -1,6 +1,6 @@
 package main.java;
 import bagel.Window;
-import bagel.map.TiledMap;
+import bagel.map.*;
 import bagel.util.Point;
 
 import java.util.List;
@@ -12,7 +12,6 @@ class Map {
     public void render() {
         map.draw(0, 0, 0, 0, Window.getWidth(), Window.getHeight());
     }
-
     public static List<Point> getPolylinePoints() {
         return polylinePoints;
     }

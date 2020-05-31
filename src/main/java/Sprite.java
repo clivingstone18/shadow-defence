@@ -28,6 +28,10 @@ public abstract class Sprite {
         this.angle = 0;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
 
     public Rectangle getRect() {
         return new Rectangle(rect);
@@ -50,10 +54,22 @@ public abstract class Sprite {
         this.angle = angle;
     }
 
+    public static boolean cursorInRange(Point point, Rectangle rect) {
+        boolean validX = (point.x >= rect.left()) && (point.x <= rect.right());
+        boolean validY = (point.y >= rect.top()) && (point.y <= rect.bottom());
+        //check if cliced within bounding box
+        return validX && validY;
+    }
+
     /**
      * Updates the Sprite. Default behaviour is to render the Sprite at its current position.
      */
     public void update() {
         image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));
     }
+    public void update(Point point) {
+        image.draw(point.x, point.y, new DrawOptions().setRotation(angle));
+    }
+
+
 }

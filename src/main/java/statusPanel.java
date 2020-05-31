@@ -29,4 +29,7 @@ public class statusPanel {
 
     }
 
+    public Image getBackground() {
+        return background;
+    }
 }

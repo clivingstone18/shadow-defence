@@ -1,7 +1,11 @@
 package main.java;
 
 import bagel.*;
+import bagel.map.TiledMap;
+import bagel.util.Point;
+import bagel.util.Rectangle;
 import bagel.util.Vector2;
+import bagel.Input;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,13 +19,18 @@ class ShadowDefend extends AbstractGame {
     private Map map;
     private buyPanel buyPanel;
     private statusPanel statusPanel;
+    private String status;
     private int playerFunds;
     private int lives;
     private int currWaveIndex;
+    private int currWaveCount;
+    private boolean itemSelected;
+    private Tower selectedTower;
     private Wave wave;
     private Font font;
     public static double timescaleMultiplier;
     private List<Wave> waveEvents;
+    private List<Attacker> activeTowers;
 
     public static double getTimescale() {
         return timescaleMultiplier;
@@ -48,7 +57,7 @@ class ShadowDefend extends AbstractGame {
                 //creates new delay event
                 else {
                     int delay = Integer.parseInt(dataArr[2]);
-                    delayWave delayWave = new delayWave(delay/timescaleMultiplier);
+                    delayWave delayWave = new delayWave(delay/timescaleMultiplier, waveNo);
                     waveEvents.add(delayWave);
                 }
             }
@@ -69,53 +78,110 @@ class ShadowDefend extends AbstractGame {
         font = new Font("res/fonts/DejaVuSans-Bold.ttf", 18);
         //read in files
         currWaveIndex = 0;
+        currWaveCount = 1;
         timescaleMultiplier = 1;
         lives = 25;
         waveEvents = readWaveEvents("res/levels/waves.txt");
+        activeTowers = new ArrayList<>();
+        status = "Awaiting Start";
+    }
+
+    public boolean ValidReleasePoint(Point point) {
+        return !Sprite.cursorInRange(point, buyPanel.getBackground().getBoundingBox()) &&
+                !Sprite.cursorInRange(point, statusPanel.getBackground().getBoundingBox()) &&
+                !Map.map.hasProperty((int) point.x, (int) point.y, "blocked");
     }
 
     @Override
     protected void update(Input input) {
+
         //basic rendering
         map.render();
-        buyPanel.render();
-        buyPanel.updateBuyPanel(playerFunds);
-        statusPanel.render(currWaveIndex + 1, timescaleMultiplier,
-                "Wave in Progress", lives);
+        buyPanel.render(playerFunds);
+        statusPanel.render(currWaveCount, timescaleMultiplier,
+                status, lives);
 
-        //starts the game
-        if (input.wasPressed(Keys.S) && !waveEvents.get(0).isHappening()) {
-            waveEvents.get(0).Start();
-        }
+        //click
 
-        //update timescale multiplier
-        if (input.wasPressed(Keys.K) || input.wasPressed(Keys.L)) {
-            if (input.wasPressed(Keys.L)) {
-                timescaleMultiplier++;
-            } else {
-                if (timescaleMultiplier > 1) {
-                    timescaleMultiplier--;
-                }
-            }
-        }
-
-        //array of events
-        for (int i = 0; i < waveEvents.size() - 1; i++) {
-
-            //checks if wave is in progress
-            if (waveEvents.get(i).isHappening()) {
-                if (waveEvents.get(i).getDuration() <= waveEvents.get(i).getCurrTime()) {
-                    if (!waveEvents.get(i + 1).isHappening()) {
-                        waveEvents.get(i + 1).Start();
+        if (input.wasPressed(MouseButtons.LEFT)) {
+            Point clickPoint = input.getMousePosition();
+            for (int i = 0; i < buyPanel.getPurchaseItems().size(); i++) {
+                //add abstraction here
+                if (Sprite.cursorInRange(clickPoint, buyPanel.getPurchaseItems().get(i).getTower().getRect())) {
+                    if (buyPanel.getPurchaseItems().get(i).getTower().getCost() <= playerFunds) {
+                        System.out.println("Selected item");
+                        itemSelected = true;
+                        selectedTower = buyPanel.getPurchaseItems().get(i).getTower();
+                        status = "Placing";
                     }
                 }
-                waveEvents.get(i).Update();
-            }
-            else if (waveEvents.get(i).hasFinished()) {
-                waveEvents.remove(waveEvents.get(i));
             }
         }
-    }
+        if (itemSelected) {
+            Point hoverPoint = input.getMousePosition();
+            if (ValidReleasePoint(hoverPoint)) {
+                selectedTower.update(hoverPoint);
+            }
+            // Cancellation
+            if (input.wasPressed(MouseButtons.RIGHT)) {
+                selectedTower = null;
+                itemSelected = false;
+            }
+            if (input.wasReleased(MouseButtons.LEFT)) {
+                if (ValidReleasePoint(hoverPoint)) {
+                    Attacker droppedTower = new Attacker();
+                    droppedTower.setTower(selectedTower.clone());
+                    droppedTower.setPosition(hoverPoint);
+                    activeTowers.add(droppedTower);
+                    selectedTower = null;
+                    itemSelected = false;
+                    status = "Wave in Progress";
+                    playerFunds -= droppedTower.getTower().getCost();
+                }
+            }
+        }
+        for (Attacker attacker: activeTowers) {
+            attacker.getTower().update(attacker.getPosition());
+        }
+
+
+
+            //starts the game
+            if (input.wasPressed(Keys.S) && !waveEvents.get(0).isHappening()) {
+                waveEvents.get(0).Start();
+                status = "Wave in Progress";
+            }
+
+            //update timescale multiplier
+            if (input.wasPressed(Keys.K) || input.wasPressed(Keys.L)) {
+                if (input.wasPressed(Keys.L)) {
+                    timescaleMultiplier++;
+                } else {
+                    if (timescaleMultiplier > 1) {
+                        timescaleMultiplier--;
+                    }
+                }
+            }
+
+            //array of events
+            for (int i = 0; i < waveEvents.size() - 1; i++) {
+                //checks if wave is in progress
+                if (waveEvents.get(i).isHappening()) {
+                    if (waveEvents.get(i).getDuration() <= waveEvents.get(i).getCurrTime()) {
+                        if (!waveEvents.get(i + 1).isHappening()) {
+                            waveEvents.get(i + 1).Start();
+                            currWaveCount = waveEvents.get(i + 1).getWaveNo();
+                        }
+                    }
+                    waveEvents.get(i).Update();
+                } else if (waveEvents.get(i).hasFinished()) {
+                    waveEvents.remove(waveEvents.get(i));
+                }
+            }
+        }
+
+
+
 
 
     public static void main(String[] args) {

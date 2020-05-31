@@ -1,15 +1,15 @@
 package main.java;
 import bagel.Image;
 import bagel.util.Colour;
+import bagel.util.Rectangle;
 
 class purchaseItem<T extends Tower> {
-    private int cost;
     private Colour colour;
     private boolean sufficientFunds;
     private T tower;
 
     public void setColour(int userFunds) {
-        if (userFunds >= cost) {
+        if (userFunds >= tower.getCost()) {
             //makes it green if funds are sufficient
             this.colour = new Colour(0, 255, 0);
         } else {

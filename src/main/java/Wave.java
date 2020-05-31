@@ -6,6 +6,7 @@ public abstract class Wave {
     public abstract void Start();
 
     public abstract boolean hasFinished();
+    public abstract int getWaveNo();
 
     public abstract double getDuration();
 
