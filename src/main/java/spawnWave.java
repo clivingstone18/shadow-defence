@@ -53,13 +53,13 @@ public class spawnWave extends Wave {
 
     public Slicer slicerOfType(String type) {
         if (type.equals("slicer")) {
-            return new Slicer("res/images/slicer.png");
+            return new Slicer("res/images/slicer.png", 2, 1, 2, 1);
         } else if (type.equals("superslicer")) {
-            return new SuperSlicer("res/images/superslicer.png");
+            return new SuperSlicer("res/images/superslicer.png", 0.75*2, 1, 15, 4);
         } else if (type.equals("megaslicer")) {
-            return new MegaSlicer("res/images/superslicer.png");
+            return new MegaSlicer("res/images/megaslicer.png", 0.75*2, 2, 10,  8);
         } else {
-            return new ApexSlicer("res/images/apexslicer.png");
+            return new ApexSlicer("res/images/apexslicer.png", 0.75, 25, 150,  32);
         }
     }
 

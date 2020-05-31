@@ -8,10 +8,10 @@ import java.util.List;
 import static main.java.Map.polylinePoints;
 
 public class Slicer extends Sprite {
-    private double speed = 2;
-    private int health = 1;
-    private int reward = 2;
-    private int penalty = 1;
+    private double speed;
+    private int health;
+    private int reward;
+    private int penalty;
     private int targetPointIndex;
     private List<Point> polyline;
     private boolean finished;
@@ -33,11 +33,15 @@ public class Slicer extends Sprite {
         return reward;
     }
 
-    public Slicer(String imgSrc) {
+    public Slicer(String imgSrc, double speed, int health, int reward, int penalty){
         super(polylinePoints.get(0), imgSrc);
         this.polyline = polylinePoints;
         this.targetPointIndex = 1;
         this.finished = false;
+        this.speed=speed;
+        this.health=health;
+        this.reward=reward;
+        this.penalty=penalty;
     }
 
     public void update() {
