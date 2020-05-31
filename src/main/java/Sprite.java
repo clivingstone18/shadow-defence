@@ -2,7 +2,6 @@ package main.java;
 
 import bagel.DrawOptions;
 import bagel.Image;
-import bagel.Input;
 import bagel.util.Point;
 import bagel.util.Rectangle;
 import bagel.util.Vector2;

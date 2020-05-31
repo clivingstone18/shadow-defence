@@ -4,40 +4,38 @@ import bagel.util.Point;
 import bagel.util.Rectangle;
 
 public class Tank extends Tower {
-    int effectRadius = 100;
-    int damage = 1;
-    int cooldown = 1000;
-    int cost = 250;
+    private int effectRadius;
+    private int damage;
+    private double cooldown;
+    private int cost;
     Image projectileImage = new Image("res/images/tank_projectile.png");
     Image tankImage = new Image("res/images/tank.png");
 
-    public Tank(Point point, String imageSrc) {
+    public Tank(Point point, String imageSrc, int effectRadius, int damage, double cooldown, int cost) {
         super(point, imageSrc);
+        this.effectRadius = effectRadius;
+        this.damage = damage;
+        this.cooldown = cooldown;
+        this.cost = cost;
     }
 
-    public int getEffectRadius() {
-        return effectRadius;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public Image getProjectileImage() {
-        return projectileImage;
-    }
-
-    public Image getTankImage() {
-        return tankImage;
-    }
-
+    @Override
     public int getCost() {
         return cost;
     }
 
+    @Override
+    public int getEffectRadius() {
+        return effectRadius;
+    }
+
+    @Override
+    public int getDamage() {
+        return damage;
+    }
+
+    public double getCooldown() {
+        return cooldown;
+    }
 
 }

@@ -66,11 +66,13 @@ public class spawnWave extends Wave {
     //starts the wave of the game
     public void Start() {
         activeSlicers = new ArrayList<>();
-        activeSlicers.add(slicerOfType(enemyType));
+        Slicer newSlicer = slicerOfType(enemyType);
+        activeSlicers.add(newSlicer);
         this.isHappening = true;
         this.spawnedSlicers = 1;
         this.hasFinished=false;
         this.currTime = 0;
+        ShadowDefend.activeEnemies.add(new Enemy(newSlicer));
     }
 
     @Override
@@ -79,7 +81,9 @@ public class spawnWave extends Wave {
         currTime += ShadowDefend.getTimescale() / FPS;
         for (int i = 0; i < activeSlicers.size(); i++) {
             if (frameCount/FPS >= delay && spawnedSlicers != slicerCount) {
-                activeSlicers.add(slicerOfType(enemyType));
+                Slicer newSlicer = slicerOfType(enemyType);
+                activeSlicers.add(newSlicer);
+                ShadowDefend.activeEnemies.add(new Enemy(newSlicer));
                 spawnedSlicers++;
                 frameCount = 0;
             }
@@ -94,11 +98,6 @@ public class spawnWave extends Wave {
 
         if (slicersFinished == slicerCount) {
             hasFinished = true;
-        }
-
-        // Update all sprites
-        for (Slicer s : activeSlicers) {
-            s.update();
         }
     }
 }

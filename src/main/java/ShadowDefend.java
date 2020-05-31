@@ -20,17 +20,18 @@ class ShadowDefend extends AbstractGame {
     private buyPanel buyPanel;
     private statusPanel statusPanel;
     private String status;
-    private int playerFunds;
     private int lives;
     private int currWaveIndex;
     private int currWaveCount;
     private boolean itemSelected;
     private Tower selectedTower;
     private Wave wave;
+    public static int playerFunds;
     private Font font;
     public static double timescaleMultiplier;
     private List<Wave> waveEvents;
     private List<Attacker> activeTowers;
+    public static List<Enemy> activeEnemies;
 
     public static double getTimescale() {
         return timescaleMultiplier;
@@ -83,6 +84,7 @@ class ShadowDefend extends AbstractGame {
         lives = 25;
         waveEvents = readWaveEvents("res/levels/waves.txt");
         activeTowers = new ArrayList<>();
+        activeEnemies = new ArrayList<>();
         status = "Awaiting Start";
     }
 
@@ -129,9 +131,7 @@ class ShadowDefend extends AbstractGame {
             }
             if (input.wasReleased(MouseButtons.LEFT)) {
                 if (ValidReleasePoint(hoverPoint)) {
-                    Attacker droppedTower = new Attacker();
-                    droppedTower.setTower(selectedTower.clone());
-                    droppedTower.setPosition(hoverPoint);
+                    Attacker droppedTower = new Attacker(hoverPoint, selectedTower.clone());
                     activeTowers.add(droppedTower);
                     selectedTower = null;
                     itemSelected = false;
@@ -140,11 +140,18 @@ class ShadowDefend extends AbstractGame {
                 }
             }
         }
-        for (Attacker attacker: activeTowers) {
+
+        for (Attacker attacker : activeTowers) {
             attacker.getTower().update(attacker.getPosition());
+            attacker.detectAndShoot(activeEnemies);
+            if (attacker.getProjectile() != null) {
+                attacker.getProjectile().update();
+                if (attacker.hasHitTarget()) {
+                    System.out.println("hit the target");
+                    attacker.deleteProjectile();
+                }
+            }
         }
-
-
 
             //starts the game
             if (input.wasPressed(Keys.S) && !waveEvents.get(0).isHappening()) {
@@ -178,9 +185,16 @@ class ShadowDefend extends AbstractGame {
                     waveEvents.remove(waveEvents.get(i));
                 }
             }
+
+        for(int i=0; i<activeEnemies.size(); i++) {
+            if (activeEnemies.get(i).isEliminated()) {
+                activeEnemies.remove(activeEnemies.get(i));
+                continue;
+            }
+            activeEnemies.get(i).getEnemyType().update();
         }
 
-
+}
 
 
 

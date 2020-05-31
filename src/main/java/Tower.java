@@ -1,13 +1,17 @@
 package main.java;
 
-import bagel.Image;
 import bagel.util.Point;
 
 public abstract class Tower extends Sprite implements Cloneable {
+    private int effectRadius;
+    private int damage;
+    private double cooldown;
+    private int cost;
 
     public Tower(Point point, String imageSrc) {
         super(point, imageSrc);
     }
+
     public static Tower createNewTower(Tower tower) {
         return tower;
     }
@@ -22,7 +26,15 @@ public abstract class Tower extends Sprite implements Cloneable {
         }
     }
 
-    public abstract int getCost();
+    public int getEffectRadius() {
+        return effectRadius;
+    }
 
+    public int getDamage() {return damage;}
 
+    public int getCost() {
+        return cost;
+    }
+
+    public abstract double getCooldown();
 }

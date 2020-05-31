@@ -1,6 +1,5 @@
 package main.java;
 
-import bagel.Input;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
@@ -9,13 +8,14 @@ import java.util.List;
 import static main.java.Map.polylinePoints;
 
 public class Slicer extends Sprite {
-    private double speed = 1;
-    private int health = 2;
-    private int reward = 1;
-    private int penalty = 2;
+    private double speed = 2;
+    private int health = 1;
+    private int reward = 2;
+    private int penalty = 1;
     private int targetPointIndex;
     private List<Point> polyline;
     private boolean finished;
+    private Vector2 position;
 
     public double getSpeed() {
         return speed;
@@ -27,6 +27,10 @@ public class Slicer extends Sprite {
 
     public int getPenalty() {
         return penalty;
+    }
+
+    public int getReward() {
+        return reward;
     }
 
     public Slicer(String imgSrc) {
@@ -61,7 +65,7 @@ public class Slicer extends Sprite {
             }
         }
         super.move(distance.normalised().mul(speed * ShadowDefend.getTimescale()));
-        setAngle(Math.atan2(targetPoint.y - currentPoint.y, targetPoint.x - currentPoint.x));
+        super.setAngle(Math.atan2(targetPoint.y - currentPoint.y, targetPoint.x - currentPoint.x));
         super.update();
     }
 

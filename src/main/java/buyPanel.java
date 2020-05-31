@@ -30,12 +30,12 @@ public class buyPanel {
     public buyPanel() {
         PIX = 64;
         purchaseItems = new ArrayList<>();
-        purchaseItems.add(new purchaseItem<Tank>(new Tank(new Point(PIX,background.getHeight()/2 - 10),
-                "res/images/tank.png")));
-        purchaseItems.add(new purchaseItem<superTank>(new superTank(new Point(PIX+120,background.getHeight()/2 - 10),
-                "res/images/supertank.png")));
-        purchaseItems.add(new purchaseItem<Airplane>(new Airplane(new Point(PIX+240, background.getHeight()/2 - 10),
-                "res/images/airsupport.png")));
+        purchaseItems.add(new purchaseItem<>(new Tank(new Point(PIX,background.getHeight()/2 - 10),
+                "res/images/tank.png", 100, 1, 1000, 250)));
+        purchaseItems.add(new purchaseItem<>(new superTank(new Point(PIX+120,background.getHeight()/2 - 10),
+                "res/images/supertank.png", 150, 3, 500, 600)));
+        purchaseItems.add(new purchaseItem<>(new Airplane(new Point(PIX+240, background.getHeight()/2 - 10),
+                "res/images/airsupport.png", 500)));
     }
 
     public void render(int playerFunds) {
