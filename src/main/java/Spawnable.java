@@ -1,7 +1,9 @@
 package main.java;
 
-public interface Spawnable {
+import bagel.util.Point;
 
+public interface Spawnable {
+    public void SpawnChildren(Point point, int index);
 
 }
 

@@ -1,5 +1,7 @@
 package main.java;
 
+import bagel.util.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,14 +54,15 @@ public class spawnWave extends Wave {
     }
 
     public Slicer slicerOfType(String type) {
+        Point init = Map.getPolylinePoints().get(0);
         if (type.equals("slicer")) {
-            return new Slicer("res/images/slicer.png", 2, 1, 2, 1);
+            return new Slicer("res/images/slicer.png", 2, 1, 2, 1, init);
         } else if (type.equals("superslicer")) {
-            return new SuperSlicer("res/images/superslicer.png", 0.75*2, 1, 15, 4);
+            return new SuperSlicer("res/images/superslicer.png", 0.75*2, 1, 15, 4, init);
         } else if (type.equals("megaslicer")) {
-            return new MegaSlicer("res/images/megaslicer.png", 0.75*2, 2, 10,  8);
+            return new MegaSlicer("res/images/megaslicer.png", 0.75*2, 2, 10,  8, init);
         } else {
-            return new ApexSlicer("res/images/apexslicer.png", 0.75, 25, 150,  32);
+            return new ApexSlicer("res/images/apexslicer.png", 0.75, 25, 150,  32, init);
         }
     }
 

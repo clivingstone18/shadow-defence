@@ -17,6 +17,14 @@ public class Slicer extends Sprite {
     private boolean finished;
     private Vector2 position;
 
+    public int getTargetPointIndex() {
+        return targetPointIndex;
+    }
+
+    public void setTargetPointIndex(int targetPointIndex) {
+        this.targetPointIndex = targetPointIndex;
+    }
+
     public double getSpeed() {
         return speed;
     }
@@ -33,8 +41,8 @@ public class Slicer extends Sprite {
         return reward;
     }
 
-    public Slicer(String imgSrc, double speed, int health, int reward, int penalty){
-        super(polylinePoints.get(0), imgSrc);
+    public Slicer(String imgSrc, double speed, int health, int reward, int penalty, Point point){
+        super(point, imgSrc);
         this.polyline = polylinePoints;
         this.targetPointIndex = 1;
         this.finished = false;

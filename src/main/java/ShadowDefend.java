@@ -20,7 +20,7 @@ class ShadowDefend extends AbstractGame {
     private buyPanel buyPanel;
     private statusPanel statusPanel;
     private String status;
-    private int lives;
+    public static int lives;
     private int currWaveIndex;
     private int currWaveCount;
     private boolean itemSelected;

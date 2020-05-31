@@ -44,6 +44,10 @@ public class Enemy<E extends Slicer> {
     public boolean isEliminated() {
         if (health <= 0) {
             ShadowDefend.playerFunds += reward;
+            if (enemyType instanceof Spawnable) {
+                ((Spawnable) enemyType).SpawnChildren(enemyType.getCenter(), enemyType.getTargetPointIndex());
+            }
+
             return true;
         }
         else {
