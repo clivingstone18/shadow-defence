@@ -5,7 +5,7 @@ public class delayWave extends Wave {
     private double duration;
     private double current;
     private boolean isHappening;
-    private boolean hasFinished;
+    private boolean hasCompleted;
     private double FPS = 60;
     //measures duration in ms
     //measure of duration
@@ -16,7 +16,7 @@ public class delayWave extends Wave {
             current += ShadowDefend.getTimescale()/FPS;
         } else {
             isHappening = false;
-            hasFinished = true;
+            hasCompleted = true;
         }
     }
 
@@ -29,6 +29,17 @@ public class delayWave extends Wave {
         return waveNo;
     }
 
+    @Override
+    public int getSlicerCount() {
+        return 0;
+    }
+
+    public String toString() {
+        System.out.println("delay wave");
+        System.out.println(waveNo);
+        return null;
+    }
+
 
     @Override
     public boolean isHappening() {
@@ -39,13 +50,13 @@ public class delayWave extends Wave {
     public void Start() {
         isHappening = true;
         current = 0;
-        hasFinished = false;
+        hasCompleted = false;
 
     }
 
     @Override
-    public boolean hasFinished() {
-        return hasFinished;
+    public boolean hasCompleted() {
+        return hasCompleted;
     }
 
     @Override

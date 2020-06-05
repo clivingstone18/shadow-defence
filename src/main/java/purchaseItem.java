@@ -3,10 +3,10 @@ import bagel.Image;
 import bagel.util.Colour;
 import bagel.util.Rectangle;
 
-class purchaseItem<T extends Tower> {
+class purchaseItem {
     private Colour colour;
     private boolean sufficientFunds;
-    private T tower;
+    private Tower tower;
 
     public void setColour(int userFunds) {
         if (userFunds >= tower.getCost()) {
@@ -22,11 +22,11 @@ class purchaseItem<T extends Tower> {
         return colour;
     }
 
-    public T getTower() {
+    public Tower getTower() {
         return this.tower;
     }
 
-    public purchaseItem(T tower) {
+    public purchaseItem(Tower tower) {
         this.tower = tower;
     }
 

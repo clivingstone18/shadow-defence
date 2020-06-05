@@ -1,5 +1,6 @@
 package main.java;
 
+import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 import static main.java.Map.polylinePoints;
 
-public class Slicer extends Sprite {
+public class Slicer extends Sprite implements Attackable, Cloneable {
     private double speed;
     private int health;
     private int reward;
@@ -15,7 +16,6 @@ public class Slicer extends Sprite {
     private int targetPointIndex;
     private List<Point> polyline;
     private boolean finished;
-    private Vector2 position;
 
     public int getTargetPointIndex() {
         return targetPointIndex;
@@ -25,31 +25,59 @@ public class Slicer extends Sprite {
         this.targetPointIndex = targetPointIndex;
     }
 
+    public Slicer(Image imgSrc, Point point) {
+        super(point, imgSrc);
+        this.polyline = polylinePoints;
+        this.targetPointIndex = 1;
+        this.finished = false;
+        this.speed = 2;
+        this.health = 1;
+        this.reward = 2;
+        this.penalty = 1;
+    }
+
     public double getSpeed() {
         return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public int getHealth() {
         return health;
     }
 
-    public int getPenalty() {
-        return penalty;
+    public void setHealth(int health) {
+        this.health = health;
     }
 
     public int getReward() {
         return reward;
     }
 
-    public Slicer(String imgSrc, double speed, int health, int reward, int penalty, Point point){
-        super(point, imgSrc);
-        this.polyline = polylinePoints;
-        this.targetPointIndex = 1;
-        this.finished = false;
-        this.speed=speed;
-        this.health=health;
-        this.reward=reward;
-        this.penalty=penalty;
+    public void setReward(int reward) {
+        this.reward = reward;
+    }
+
+    public int getPenalty() {
+        return penalty;
+    }
+
+    public void setPenalty(int penalty) {
+        this.penalty = penalty;
+    }
+
+    public List<Point> getPolyline() {
+        return polyline;
+    }
+
+    public void setPolyline(List<Point> polyline) {
+        this.polyline = polyline;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public void update() {
@@ -76,6 +104,7 @@ public class Slicer extends Sprite {
                 targetPointIndex += 1;
             }
         }
+
         super.move(distance.normalised().mul(speed * ShadowDefend.getTimescale()));
         super.setAngle(Math.atan2(targetPoint.y - currentPoint.y, targetPoint.x - currentPoint.x));
         super.update();
@@ -85,4 +114,32 @@ public class Slicer extends Sprite {
         return finished;
     }
 
+    @Override
+    public boolean isEliminated() {
+        if (health <= 0) {
+            ShadowDefend.playerFunds += reward;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Slicer clone() {
+        try {
+            Slicer t = (Slicer)super.clone();
+            return t;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    @Override
+    public void reduceHealth(int towerDamage) {
+        health -= towerDamage;
+    }
 }

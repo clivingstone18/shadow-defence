@@ -1,30 +1,53 @@
 package main.java;
+import bagel.Image;
 import bagel.util.Point;
-import static main.java.Map.polylinePoints;
+import bagel.util.Vector2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class SuperSlicer extends Slicer implements Spawnable{
-    private int targetPointIndex;
-    private List<Point> polyline;
-    private boolean finished;
-    private List<Enemy> children;
-    public SuperSlicer(String imgSrc, double speed, int health, int reward, int penalty, Point point) {
-        super(imgSrc, speed, health, reward, penalty, point);
-        children = new ArrayList<>();
+public class SuperSlicer extends Slicer implements Spawnable {
+    private int numToSpawn;
 
+    private Slicer childToSpawn;
+
+    public SuperSlicer(Point point, Image imgSrc) {
+        super(imgSrc, point);
+        super.setSpeed(super.getSpeed()*0.75);
+        super.setHealth(super.getHealth());
+        super.setReward(15);
+        super.setPenalty(super.getPenalty()*2);
+        numToSpawn = 2;
+        childToSpawn = new Slicer(new Image("res/images/slicer.png"), point);
     }
 
-    @Override
-    public void SpawnChildren(Point point, int targetPointIndex) {
-        Slicer childToSpawn = new Slicer("res/images/slicer.png", 2, 1, 2, 1, point);
-        childToSpawn.setTargetPointIndex(targetPointIndex);
-        children.add(new Enemy(childToSpawn));
-        children.add(new Enemy(childToSpawn));
-        for (Enemy e: children) {
-            ShadowDefend.activeEnemies.add(e);
+    public int getNumToSpawn() {
+        return numToSpawn;
+    }
+
+    public void setChildToSpawn(Slicer childToSpawn) {
+        this.childToSpawn = childToSpawn;
+    }
+
+    public void setNumToSpawn(int numToSpawn) {
+        this.numToSpawn = numToSpawn;
+    }
+
+    public Slicer getChildToSpawn() {
+        return this.childToSpawn;
+    }
+
+    public List<Slicer> getChildrenToSpawn() {
+        List<Slicer> childrenToSpawn = new ArrayList<>();
+        Point point = getCenter();
+        for (int i=0; i<numToSpawn; i++) {
+            Slicer child = childToSpawn.clone();
+            child.centerRectAt(point);
+            child.setTargetPointIndex(getTargetPointIndex());
+            childrenToSpawn.add(child);
         }
+        return childrenToSpawn;
     }
 
 }

@@ -1,26 +1,24 @@
 package main.java;
 
+import bagel.Image;
 import bagel.util.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MegaSlicer extends SuperSlicer {
-    private List<Enemy> children;
-    public MegaSlicer(String imgSrc, double speed, int health, int reward, int penalty, Point point) {
-        super(imgSrc, speed, health, reward, penalty, point);
-        children = new ArrayList<>();
 
+    public MegaSlicer(String imgSrc, Point point) {
+        super(point, new Image(imgSrc));
+        super.setSpeed(super.getSpeed());
+        super.setHealth(super.getHealth() * 2);
+        super.setReward(10);
+        super.setPenalty(super.getPenalty() * 2);
+        super.setNumToSpawn(2);
+        super.setChildToSpawn(new SuperSlicer(point, new Image("res/images/superslicer.png")));
     }
 
-    @Override
-    public void SpawnChildren(Point point, int targetPointIndex) {
-        SuperSlicer childToSpawn = new SuperSlicer("res/images/superslicer.png", 0.75, 1, 15,  2, point);
-        childToSpawn.setTargetPointIndex(targetPointIndex);
-        children.add(new Enemy(childToSpawn));
-        children.add(new Enemy(childToSpawn));
-        for (Enemy e: children) {
-            ShadowDefend.activeEnemies.add(e);
-        }
-    }
+
 }
+
+

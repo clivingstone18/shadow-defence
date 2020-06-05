@@ -1,8 +1,11 @@
 package main.java;
 import bagel.util.Point;
+import bagel.util.Vector2;
 
-public class SuperTankProjectile extends Projectile {
-    public SuperTankProjectile(Point point) {
-        super(point, "res/images/supertank_projectile.png", 10, 3);
+public class SuperTankProjectile extends TankProjectile {
+    public SuperTankProjectile(Point point, String imgStr) {
+        super(point, imgStr);
+        setDamage(getDamage()*3);
     }
+
 }
