@@ -7,8 +7,6 @@ public class delayWave extends Wave {
     private boolean isHappening;
     private boolean hasCompleted;
     private double FPS = 60;
-    //measures duration in ms
-    //measure of duration
 
     @Override
     public void Update() {
@@ -29,10 +27,6 @@ public class delayWave extends Wave {
         return waveNo;
     }
 
-    @Override
-    public int getSlicerCount() {
-        return 0;
-    }
 
     public String toString() {
         System.out.println("delay wave");

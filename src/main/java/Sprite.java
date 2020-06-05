@@ -70,15 +70,23 @@ public abstract class Sprite {
     }
 
 
+    public boolean validRenderingPoint(Point point) {
+        return !ShadowDefend.buyPanel.inBoundingBoxRange(point) && !ShadowDefend.statusPanel.inBoundingBoxRange(point);
+    }
+
     /**
      * Updates the Sprite. Default behaviour is to render the Sprite at its current position.
      */
 
     public void update() {
-        image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));
+        if (validRenderingPoint(getCenter())) {
+            image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));
+        }
     }
     public void update(Point point) {
-        image.draw(point.x, point.y, new DrawOptions().setRotation(angle));
+        if (validRenderingPoint(point)) {
+            image.draw(point.x, point.y, new DrawOptions().setRotation(angle));
+        }
     }
 
 

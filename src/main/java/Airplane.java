@@ -5,7 +5,6 @@ import bagel.util.Point;
 import bagel.util.Vector2;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Airplane extends Tower {
@@ -54,8 +53,15 @@ public class Airplane extends Tower {
         }
     }
 
-    public void setDirVec(Vector2 dirVec) {
+    public void setDir(Vector2 dirVec) {
         this.dirVec = dirVec;
+        // Travelling horizontally
+        if (dirVec.x == 0) {
+            setAngle(Math.PI);
+        }
+        else {
+            setAngle(Math.PI/2);
+        }
     }
 
     @Override
@@ -65,16 +71,19 @@ public class Airplane extends Tower {
             Explosive dormantExplosive = (Explosive) this.explosives.get(i);
             dormantExplosive.increaseTime();
         }
+        // If the Airplane has reached the end, doesn't detect any enemies
+        // Isn't deleted straight away as it needs to wait for explosives to detonate
         if (super.outOfBounds()) {return;}
 
         this.timeElapsedDrop += ShadowDefend.getTimescale()/FPS;
 
         //Adds new explosive to the list
         if (this.timeElapsedDrop >= this.dropTime) {
+            this.timeElapsedDrop = 0;
             Explosive newExplosive = new Explosive(super.getCenter(),"res/images/explosive.png", 200);
+            // Centers the explosive at the airplane's current position
             newExplosive.centerRectAt(super.getCenter());
             this.explosives.add(newExplosive);
-            this.timeElapsedDrop = 0;
             // Generates a new drop time
             this.dropTime = Math.random() * 3;
             this.numDropped++;
@@ -89,10 +98,10 @@ public class Airplane extends Tower {
                 if (explosive != null && explosive.getDetTime()>=2) {
                     numDetonated++;
                     detExp.add(explosive);
-                    //Checks if enemy is in the area
+                    //Checks if enemy is in the area and does damage to it
                     for (Slicer target: ShadowDefend.activeEnemies) {
                         if (explosive.getCenter().distanceTo(target.getCenter()) <= getEffectRadius()) {
-                            target.reduceHealth(500);
+                            target.reduceHealth(getDamage());
                     }
                 }
             }

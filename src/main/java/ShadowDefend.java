@@ -13,8 +13,8 @@ import java.io.File;
 class ShadowDefend extends AbstractGame {
 
     private Map map;
-    private buyPanel buyPanel;
-    private statusPanel statusPanel;
+    public static buyPanel buyPanel;
+    public static statusPanel statusPanel;
     private String status;
     public static int lives;
     private int currWaveIndex;
@@ -157,9 +157,8 @@ class ShadowDefend extends AbstractGame {
                     droppedTower.centerRectAt(hoverPoint);
                     if (droppedTower instanceof Airplane) {
                         Airplane airplane = (Airplane) droppedTower;
-                        airplane.setDirVec(planeDir);
+                        airplane.setDir(planeDir);
                         airplane.setSpawnPoint();
-                        airplane.setAngle(3.14 / 2 - Math.atan2(planeDir.y, planeDir.x));
                         switchPlaneDirVec();
                     }
                     activeTowers.add(droppedTower);

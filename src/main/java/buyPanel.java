@@ -32,17 +32,13 @@ public class buyPanel extends Panel{
                 new Image("res/images/airsupport.png"))));
     }
 
-
-
-
-
-
     //renders the buy panel
     public void render(int playerFunds) {
         PIX = 64;
         super.getBackground().drawFromTopLeft(0,0);
         for (purchaseItem purchaseItem: purchaseItems) {
-            purchaseItem.getTower().render();
+            Point point = purchaseItem.getTower().getCenter();
+            purchaseItem.getTower().getImage().draw(point.x, point.y);
             purchaseItem.setColour(playerFunds);
             DrawOptions colour = new DrawOptions().setBlendColour(purchaseItem.getColour());
             objFont.drawString("$" + String.valueOf(purchaseItem.getTower().getCost()), PIX-20,
@@ -53,4 +49,5 @@ public class buyPanel extends Panel{
         fundsFont.drawString("$" + String.valueOf(playerFunds), Window.getWidth()-200,
                 super.getBackground().getHeight() - 30);
     }
+ 
 }
