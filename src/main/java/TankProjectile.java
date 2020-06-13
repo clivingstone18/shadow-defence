@@ -5,12 +5,13 @@ import bagel.util.Point;
 import bagel.util.Vector2;
 
 public class TankProjectile extends Projectile {
-    private double velocity;
+    private final double VELOCITY = 10;
+    private final double DAMAGE = 1;
 
     public TankProjectile(Point point) {
-        super(point,1);
+        super(point);
+        super.setDamage(DAMAGE);
         super.setImage(new Image("res/images/tank_projectile.png"));
-        this.velocity = 10;
     }
 
     public Projectile copy() {
@@ -19,15 +20,8 @@ public class TankProjectile extends Projectile {
     }
 
     public void updateProjectile() {
-        super.move(super.getDirVec().normalised().mul(velocity * ShadowDefend.getTimescale()));
+        super.move(super.getDirVec().normalised().mul(VELOCITY * ShadowDefend.getTimescale()));
         super.update();
     }
 
-    public double getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
-    }
 }

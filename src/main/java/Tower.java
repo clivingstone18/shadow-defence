@@ -17,7 +17,7 @@ public abstract class Tower<T extends Tower> extends Sprite {
 
     public void setProjectile(Projectile projectile) {
         this.projectile = projectile;
-     }
+    }
 
     public void update() {
         super.update();
@@ -25,7 +25,7 @@ public abstract class Tower<T extends Tower> extends Sprite {
 
     public Projectile getProjectile() {
         return this.projectile;
-     }
+    }
 
     public void setEffectRadius(int effectRadius) {
         this.effectRadius = effectRadius;
@@ -49,11 +49,10 @@ public abstract class Tower<T extends Tower> extends Sprite {
         return cost;
     }
 
-    public abstract void detectAndShoot();
-
-    public abstract void HitTargets();
 
     public abstract void updateAllProjectiles();
 
 }
+
+
 

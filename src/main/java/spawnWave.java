@@ -22,9 +22,8 @@ public class spawnWave extends Wave {
     private List<Point> polyline;
     private int penaltiesIncurred;
     private int rewards;
-
-
     private final double FPS = 60;
+    private List<Slicer> newEnemies;
 
     private List<Slicer> activeSlicers;
 
@@ -35,11 +34,7 @@ public class spawnWave extends Wave {
     public double getCurrTime() {
         return currTime;
     }
-
-    public int getSlicerCount() {
-        return slicerCount;
-    }
-
+    
     public int getWaveNo() {
         return waveNo;
     }
@@ -64,6 +59,7 @@ public class spawnWave extends Wave {
         this.duration = (slicerCount - 1) * this.delay;
         this.childSlicers = 0;
         this.polyline = polyline;
+        this.newEnemies = new ArrayList<>();
     }
 
     public boolean isHappening() {
@@ -96,11 +92,13 @@ public class spawnWave extends Wave {
         this.spawnedSlicers = 1;
         this.hasFinished = false;
         this.currTime = 0;
-        ShadowDefend.activeEnemies.add(newSlicer);
+        newEnemies.add(newSlicer);
     }
 
     @Override
     public void Update() {
+        List<Slicer> newEnemies = new ArrayList<>();
+
         penaltiesIncurred = 0;
         rewards = 0;
         if (slicersCompleted == slicerCount + childSlicers) {
@@ -111,27 +109,23 @@ public class spawnWave extends Wave {
         frameCount += ShadowDefend.getTimescale();
         currTime += ShadowDefend.timescaleMultiplier / FPS;
         //checks for new slicers
-        List<Slicer> newSlicers = new ArrayList<>();
         for (int i = 0; i < activeSlicers.size(); i++) {
             if (frameCount / FPS >= delay && spawnedSlicers != slicerCount) {
                 Slicer newSlicer = slicerOfType(enemyType);
-                newSlicers.add(newSlicer);
+                newEnemies.add(newSlicer);
                 spawnedSlicers++;
                 frameCount = 0;
             }
         }
-        activeSlicers.addAll(newSlicers);
-        ShadowDefend.activeEnemies.addAll(newSlicers);
-
         // Update the slicers
         List<Slicer> toDelete = new ArrayList<>();
-        List<Slicer> newEnemies = new ArrayList<>();
         //Check for slicers that have been eliminated and spawn their children
         for (int i = 0; i < activeSlicers.size(); i++) {
             if (activeSlicers.get(i).isEliminated()) {
                 if (activeSlicers.get(i) instanceof Spawnable) {
                     Spawnable spawnable = (Spawnable) activeSlicers.get(i);
                     newEnemies.addAll(spawnable.getChildrenToSpawn());
+                    childSlicers += spawnable.getChildrenToSpawn().size();
                 }
                 toDelete.add(activeSlicers.get(i));
                 slicersCompleted++;
@@ -150,8 +144,9 @@ public class spawnWave extends Wave {
         }
         activeSlicers.removeAll(toDelete);
         activeSlicers.addAll(newEnemies);
-        childSlicers += newEnemies.size();
-        ShadowDefend.activeEnemies.removeAll(toDelete);
-        ShadowDefend.activeEnemies.addAll(newEnemies);
+    }
+
+    public List<Slicer> getActiveSlicers() {
+        return activeSlicers;
     }
 }

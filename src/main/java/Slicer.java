@@ -22,6 +22,13 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
     private List<Point> polyline;
     private boolean finished;
 
+    private final double SLICER_SPEED = 2;
+    private final int SLICER_HEALTH = 1;
+    private final int SLICER_REWARD = 2;
+    private final int SLICER_PENALTY = 1;
+    private final String IMG_STR = "res/images/slicer.png";
+    private final Image image;
+
     public int getTargetPointIndex() {
         return targetPointIndex;
     }
@@ -32,14 +39,15 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
 
     public Slicer(Point point, List<Point> polylinePoints) {
         super(point);
-        super.setImage(new Image("res/images/slicer.png"));
         this.polyline = polylinePoints;
         this.targetPointIndex = 1;
         this.finished = false;
-        this.speed = 2;
-        this.health = 1;
-        this.reward = 2;
-        this.penalty = 1;
+        this.speed = SLICER_SPEED;
+        this.health = SLICER_HEALTH;
+        this.reward = SLICER_REWARD;
+        this.penalty = SLICER_PENALTY;
+        this.image = new Image(IMG_STR);
+        super.setImage(image);
     }
 
     public double getSpeed() {
@@ -122,7 +130,16 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
 
     // Creates a copy of the slicer
     public Slicer copy() {
-        Slicer copy = new Slicer(getCenter(), polyline);
+        Slicer copy;
+        if (this instanceof SuperSlicer) {
+            copy = new SuperSlicer(getCenter(), polyline);
+        }
+        else if (this instanceof MegaSlicer) {
+            copy = new MegaSlicer(getCenter(), polyline);
+        }
+        else {
+            copy = new Slicer(getCenter(), polyline);
+        }
         copy.setTargetPointIndex(this.getTargetPointIndex());
         copy.setIsFinished(this.getIsFinished());
         return copy;

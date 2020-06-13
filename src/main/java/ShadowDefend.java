@@ -15,17 +15,15 @@ class ShadowDefend extends AbstractGame {
 
     private buyPanel buyPanel;
     private statusPanel statusPanel;
-    public static List<Slicer> activeEnemies;
 
     private String status;
     private boolean waveStarted;
-    private int currWaveIndex;
     private int currWaveCount;
     private int wavesFinished;
     private boolean itemSelected;
     private Tower selectedTower;
-    private final Vector2 horizontal = new Vector2(1, 0);
-    private final Vector2 vertical = new Vector2(0, 1);
+    private final Vector2 HORIZONTAL = new Vector2(1, 0);
+    private final Vector2 VERTICAL = new Vector2(0, 1);
     private final int STARTING_LIVES = 25;
     private final int STARTING_FUNDS = 500;
     private final int STARTING_LEVEL = 1;
@@ -88,10 +86,10 @@ class ShadowDefend extends AbstractGame {
     }
 
     public void switchPlaneDirVec() {
-        if (planeDir.equals(horizontal)) {
-            planeDir = vertical;
+        if (planeDir.equals(HORIZONTAL)) {
+            planeDir = VERTICAL;
         } else {
-            planeDir = horizontal;
+            planeDir = HORIZONTAL;
         }
     }
 
@@ -186,12 +184,12 @@ class ShadowDefend extends AbstractGame {
                     }
                 }
                 // Updates the present wave
-                waveEvents.get(i).Update();
                 if (waveEvents.get(i) instanceof spawnWave) {
                     spawnWave wave = (spawnWave) waveEvents.get(i);
                     lives -= wave.getPenaltiesIncurred();
                     playerFunds += wave.getRewards();
                 }
+                waveEvents.get(i).Update();
             }
         }
         // Removes completed waves
@@ -203,18 +201,37 @@ class ShadowDefend extends AbstractGame {
         List<Airplane> finishedAirplanes = new ArrayList<>();
         for (int i = 0; i < activeTowers.size(); i++) {
             Tower tower = activeTowers.get(i);
-            tower.updateAllProjectiles();
-            tower.detectAndShoot();
-            tower.HitTargets();
-            tower.update();
-            if (tower instanceof Airplane) {
+            if (tower instanceof Tank) {
+                Tank tank = (Tank) tower;
+                tank.identifyTarget(getActiveEnemies());
+                tank.HitTarget();
+            }
+            else if (tower instanceof Airplane) {
                 Airplane airplane = (Airplane) tower;
+                airplane.dropExplosives();
+                airplane.destroyTargets(getActiveEnemies());
                 if (airplane.isFinished()) {
                     finishedAirplanes.add(airplane);
                 }
             }
+            tower.updateAllProjectiles();
+            tower.update();
         }
         activeTowers.removeAll(finishedAirplanes);
+    }
+
+    //Returns all the slicers currently on the map
+    public List<Slicer> getActiveEnemies() {
+        List<Slicer> activeEnemies = new ArrayList<>();
+        for (int i = 0; i < waveEvents.size(); i++) {
+            if (waveEvents.get(i) instanceof spawnWave) {
+                spawnWave wave = (spawnWave) waveEvents.get(i);
+                if (waveEvents.get(i).isHappening()) {
+                    activeEnemies.addAll(wave.getActiveSlicers());
+                }
+            }
+        }
+        return activeEnemies;
     }
 
     // Update timescale multiplier from user input
@@ -235,17 +252,14 @@ class ShadowDefend extends AbstractGame {
     public void initialise(int level) {
         map = new Map(level);
         polyline = map.getPolylinePoints();
-        currWaveIndex = 0;
         currWaveCount = 1;
         timescaleMultiplier = 1;
-        level = STARTING_LEVEL;
-        lives = STARTING_LIVES;
         playerFunds = STARTING_FUNDS;
         waveEvents = readWaveEvents("res/levels/waves.txt");
         activeTowers = new ArrayList<>();
-        activeEnemies = new ArrayList<>();
+        lives = STARTING_LIVES;
         status = "Awaiting Start";
-        planeDir = horizontal;
+        planeDir = HORIZONTAL;
         buyPanelBackground = new Image("res/images/buypanel.png");
         statusPanelBackground = new Image("res/images/statuspanel.png");
         buyPanelCenter = new Point(buyPanelBackground.getWidth() / 2, buyPanelBackground.getHeight() / 2);
@@ -258,7 +272,7 @@ class ShadowDefend extends AbstractGame {
     }
 
     public void updateStatus() {
-        if (lives > 0 && wavesFinished == totalWaves && activeEnemies.size()==0) {
+        if (lives > 0 && wavesFinished == totalWaves && getActiveEnemies().size()==0) {
             status = "Winner!";
             level++;
             initialise(level);
@@ -299,17 +313,16 @@ class ShadowDefend extends AbstractGame {
         placeTowers(input);
 
         // Updates the towers currently active
+        // Updates their movements
         updateTowers();
-
     }
 
     public ShadowDefend() {
-        initialise(STARTING_LEVEL);
+        level = STARTING_LEVEL;
+        initialise(level);
     }
 
     public static void main(String[] args) {
         new ShadowDefend().run();
     }
 }
-
-

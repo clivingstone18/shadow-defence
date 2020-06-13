@@ -8,17 +8,20 @@ public class Explosive extends Projectile {
     private double effectRadius;
     private Rectangle effectRect;
     private double detTime;
+    private final double DAMAGE = 500;
+    private final String IMG_FILE = "res/images/explosive.png";
+    private final int EFFECT_RADIUS = 200;
 
     public void increaseTime() {
         detTime += ShadowDefend.getTimescale()/60;
     }
 
     public Explosive(Point point) {
-        super(point, 500);
-        super.setImage(new Image("res/images/explosive.png"));
-        effectRadius = 200;
-        effectRect = new Rectangle(this.getCenter().x-effectRadius, this.getCenter().y-effectRadius,
-                effectRadius, effectRadius);
+        super(point);
+        super.setDamage(DAMAGE);
+        super.setImage(new Image(IMG_FILE));
+        effectRect = new Rectangle(this.getCenter().x-EFFECT_RADIUS, this.getCenter().y-EFFECT_RADIUS,
+                EFFECT_RADIUS, EFFECT_RADIUS);
         super.setRect(effectRect);
         detTime = 0;
     }

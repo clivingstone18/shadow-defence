@@ -10,9 +10,8 @@ public abstract class Projectile extends Sprite {
 
     private Vector2 dirVec;
 
-    public Projectile(Point point, double damage) {
+    public Projectile(Point point) {
         super(point);
-        this.damage = damage;
     }
 
     public abstract Projectile copy();

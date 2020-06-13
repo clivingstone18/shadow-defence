@@ -3,13 +3,23 @@ import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
-public class Tank extends Tower {
+import java.util.ArrayList;
+import java.util.List;
 
-    private Slicer target;
+public class Tank extends Tower {
     private double cooldown;
     private double timeElapsed;
     private final int FPS = 60;
     private boolean activeProjectile;
+
+    private final int TANK_EFFECT_RADIUS = 100;
+    private final int DAMAGE = 1;
+    private final int COST = 250;
+    private final double COOLDOWN = 1000;
+
+    private Slicer currTarget;
+
+    private List<Slicer> viableEnemies;
 
     // Creates a deep copy of the tank
     public Tank copy() {
@@ -18,7 +28,6 @@ public class Tank extends Tower {
         copy.setDamage(this.getDamage());
         copy.setEffectRadius(this.getEffectRadius());
         copy.setCooldown(this.cooldown);
-        copy.target = this.target;
         copy.timeElapsed = this.timeElapsed;
         copy.activeProjectile = this.activeProjectile;
         copy.setProjectile(getProjectile().copy());
@@ -27,27 +36,29 @@ public class Tank extends Tower {
 
     public Tank(Point point, Image imageSrc) {
         super(point, imageSrc);
-        super.setEffectRadius(100);
-        super.setDamage(1);
-        super.setCost(250);
+        super.setEffectRadius(TANK_EFFECT_RADIUS);
+        super.setDamage(DAMAGE);
+        super.setCost(COST);
         super.setProjectile(new TankProjectile(super.getCenter()));
-        cooldown = 1000;
+        cooldown = COOLDOWN;
         activeProjectile = false;
         timeElapsed = 0;
+        viableEnemies = new ArrayList<>();
+        currTarget = null;
     }
 
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
     }
 
-    public void detectAndShoot() {
+    public void identifyTarget(List<Slicer> activeEnemies) {
         double shortestDistance = super.getEffectRadius();
         timeElapsed += ShadowDefend.getTimescale() / FPS;
         Slicer proposedTarget = null;
         // If the cooldown period has passed, the tower can select a new target (if there is one in range)
         if (timeElapsed >= cooldown / 1000) {
             timeElapsed = 0;
-            for (Slicer enemy : ShadowDefend.activeEnemies) {
+            for (Slicer enemy : activeEnemies) {
                 Point enemyLoc = enemy.getCenter();
                 double distanceFromTowerToEnemy = enemyLoc.distanceTo(super.getCenter());
                 // Selection of the closest enemy
@@ -56,13 +67,12 @@ public class Tank extends Tower {
                     proposedTarget = enemy;
                 }
             }
-            // Assigning the target (the closest enemy)
             if (proposedTarget != null) {
-                target = proposedTarget;
                 // Sets the direction of the tank
-                Vector2 dirVec = new Vector2(target.getCenter().x - super.getCenter().x,
-                        target.getCenter().y - super.getCenter().y);
-                this.setAngle(Math.PI/2 + Math.atan2(dirVec.y, dirVec.x));
+                currTarget = proposedTarget;
+                Vector2 dirVec = new Vector2(currTarget.getCenter().x - super.getCenter().x,
+                        currTarget.getCenter().y - super.getCenter().y);
+                this.setAngle(Math.PI / 2 + Math.atan2(dirVec.y, dirVec.x));
                 super.getProjectile().setDirVec(dirVec);
                 super.getProjectile().centerRectAt(super.getCenter());
                 // Marks that tank is in action
@@ -72,20 +82,21 @@ public class Tank extends Tower {
     }
 
     // Updates the position projectile(s) currently aimed at a target
-    public void updateAllProjectiles() {
+    public void updateAllProjectiles(){
         if (activeProjectile) {
             super.getProjectile().updateProjectile();
         }
     }
 
     // Projectiles do damage to target in the range
-    public void HitTargets() {
+    public void HitTarget() {
         if (activeProjectile) {
-            if (target != null && target.inBoundingBoxRange(super.getProjectile().getCenter())) {
+            if (currTarget.inBoundingBoxRange(super.getProjectile().getCenter())) {
                 // Affects the target
-                target.reduceHealth(getDamage());
+                currTarget.reduceHealth(getDamage());
                 activeProjectile = false;
-                target = null;
+                // New target
+                currTarget = null;
             }
         }
     }

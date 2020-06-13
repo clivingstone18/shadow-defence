@@ -6,15 +6,22 @@ import bagel.util.Point;
 import java.util.List;
 
 public class ApexSlicer extends MegaSlicer {
+    private final double SPEED_FACTOR = 0.5;
+    private final int APEXSLICER_REWARD = 150;
+    private final int PENALTY_FACTOR = 2;
+    private final int HEALTH_FACTOR = 25;
+    private final int NUM_TO_SPAWN = 4;
+    private final String IMG_STR = "res/images/apexslicer.png";
+
     public ApexSlicer(Point point, List<Point> polyline) {
         super(point, polyline);
-        super.setImage(new Image("res/images/apexslicer.png"));
+        super.setImage(new Image(IMG_STR));
         super.setChildToSpawn(new MegaSlicer(point, polyline));
-        super.setSpeed(super.getSpeed()/2);
-        super.setHealth(25);
-        super.setReward(150);
-        super.setPenalty(super.getPenalty()*2);
-        super.setNumToSpawn(4);
+        super.setSpeed(super.getSpeed()*SPEED_FACTOR);
+        super.setHealth(super.getHealth()*HEALTH_FACTOR);
+        super.setReward(APEXSLICER_REWARD);
+        super.setPenalty(super.getPenalty()*PENALTY_FACTOR);
+        super.setNumToSpawn(NUM_TO_SPAWN);
     }
 
 }
