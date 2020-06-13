@@ -6,8 +6,8 @@ import bagel.util.Point;
 import java.util.List;
 
 class Map {
-    public static TiledMap map;
-    public static List<Point> polylinePoints;
+    private TiledMap map;
+    private List<Point> polylinePoints;
 
     public Map(int level) {
         map = new TiledMap(String.format("res/levels/%d.tmx", level));
@@ -16,8 +16,11 @@ class Map {
     public void render() {
         map.draw(0, 0, 0, 0, Window.getWidth(), Window.getHeight());
     }
-    public static List<Point> getPolylinePoints() {
+    public List<Point> getPolylinePoints() {
         return polylinePoints;
+    }
+    public TiledMap getMap() {
+        return map;
     }
 }
 

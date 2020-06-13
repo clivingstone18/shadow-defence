@@ -9,16 +9,20 @@ import java.util.List;
 public class spawnWave extends Wave {
     private boolean isHappening;
     private int waveNo;
-
     private int slicerCount;
     private int spawnedSlicers;
-    private int slicersFinished;
+    private int slicersCompleted;
     private int frameCount;
     private String enemyType;
     private double delay;
     private boolean hasFinished;
     private double currTime;
     private double duration;
+    private int childSlicers;
+    private List<Point> polyline;
+    private int penaltiesIncurred;
+    private int rewards;
+
 
     private final double FPS = 60;
 
@@ -32,48 +36,54 @@ public class spawnWave extends Wave {
         return currTime;
     }
 
-    public int getSlicerCount() { return slicerCount;}
+    public int getSlicerCount() {
+        return slicerCount;
+    }
 
     public int getWaveNo() {
         return waveNo;
     }
+
+    public int getPenaltiesIncurred() {
+        return penaltiesIncurred;
+    }
+
+    public int getRewards() {
+        return rewards;
+    }
+
+
     //constructors
-    public spawnWave(int waveNo, int slicerCount, String enemyType, double delay) {
+    public spawnWave(int waveNo, int slicerCount, String enemyType, double delay, List<Point> polyline) {
         this.waveNo = waveNo;
         this.slicerCount = slicerCount;
         this.enemyType = enemyType;
         this.delay = delay / 1000;
         this.frameCount = 0;
         this.isHappening = false;
-        this.duration = (slicerCount-1) * this.delay;
-    }
-
-    public String toString() {
-        System.out.println(String.format("Wave no %d", waveNo));
-        System.out.println(enemyType);
-        System.out.println(slicerCount);
-        return null;
+        this.duration = (slicerCount - 1) * this.delay;
+        this.childSlicers = 0;
+        this.polyline = polyline;
     }
 
     public boolean isHappening() {
         return isHappening;
     }
 
-    public boolean hasCompleted() {
-        return spawnedSlicers == slicerCount;
+    public boolean hasFinished() {
+        return hasFinished;
     }
 
-
     public Slicer slicerOfType(String type) {
-        Point init = Map.getPolylinePoints().get(0);
+        Point init = polyline.get(0);
         if (type.equals("slicer")) {
-            return new Slicer(new Image("res/images/slicer.png"), init);
+            return new Slicer(init, polyline);
         } else if (type.equals("superslicer")) {
-            return new SuperSlicer(init, new Image("res/images/superslicer.png"));
+            return new SuperSlicer(init, polyline);
         } else if (type.equals("megaslicer")) {
-            return new MegaSlicer("res/images/megaslicer.png",  init);
+            return new MegaSlicer(init, polyline);
         } else {
-            return new ApexSlicer("res/images/apexslicer.png", init);
+            return new ApexSlicer(init, polyline);
         }
     }
 
@@ -84,40 +94,64 @@ public class spawnWave extends Wave {
         activeSlicers.add(newSlicer);
         this.isHappening = true;
         this.spawnedSlicers = 1;
-        this.hasFinished=false;
+        this.hasFinished = false;
         this.currTime = 0;
         ShadowDefend.activeEnemies.add(newSlicer);
     }
 
     @Override
     public void Update() {
-        if (slicersFinished >= slicerCount) {
+        penaltiesIncurred = 0;
+        rewards = 0;
+        if (slicersCompleted == slicerCount + childSlicers) {
             hasFinished = true;
             return;
         }
 
         frameCount += ShadowDefend.getTimescale();
-        currTime += ShadowDefend.getTimescale() / FPS;
+        currTime += ShadowDefend.timescaleMultiplier / FPS;
+        //checks for new slicers
+        List<Slicer> newSlicers = new ArrayList<>();
         for (int i = 0; i < activeSlicers.size(); i++) {
-            if (frameCount/FPS >= delay && spawnedSlicers != slicerCount) {
+            if (frameCount / FPS >= delay && spawnedSlicers != slicerCount) {
                 Slicer newSlicer = slicerOfType(enemyType);
-                activeSlicers.add(newSlicer);
-                ShadowDefend.activeEnemies.add(newSlicer);
+                newSlicers.add(newSlicer);
                 spawnedSlicers++;
                 frameCount = 0;
             }
         }
-        // Check for slicers that have finished
-        List<Slicer> removedSlicers = new ArrayList<>();
+        activeSlicers.addAll(newSlicers);
+        ShadowDefend.activeEnemies.addAll(newSlicers);
+
+        // Update the slicers
+        List<Slicer> toDelete = new ArrayList<>();
+        List<Slicer> newEnemies = new ArrayList<>();
+        //Check for slicers that have been eliminated and spawn their children
         for (int i = 0; i < activeSlicers.size(); i++) {
-            if (activeSlicers.get(i) != null && activeSlicers.get(i).isFinished()) {
-                removedSlicers.add(activeSlicers.get(i));
-                slicersFinished++;
+            if (activeSlicers.get(i).isEliminated()) {
+                if (activeSlicers.get(i) instanceof Spawnable) {
+                    Spawnable spawnable = (Spawnable) activeSlicers.get(i);
+                    newEnemies.addAll(spawnable.getChildrenToSpawn());
+                }
+                toDelete.add(activeSlicers.get(i));
+                slicersCompleted++;
+                rewards += activeSlicers.get(i).getReward();
+            }
+            //Checks if slicer is finished
+            else if (activeSlicers.get(i).isFinished()) {
+                slicersCompleted++;
+                toDelete.add(activeSlicers.get(i));
+                penaltiesIncurred += activeSlicers.get(i).getPenalty();
+            }
+            //Just update the slicer's position
+            else {
+                activeSlicers.get(i).update();
             }
         }
-        activeSlicers.removeAll(removedSlicers);
-        ShadowDefend.activeEnemies.removeAll(removedSlicers);
+        activeSlicers.removeAll(toDelete);
+        activeSlicers.addAll(newEnemies);
+        childSlicers += newEnemies.size();
+        ShadowDefend.activeEnemies.removeAll(toDelete);
+        ShadowDefend.activeEnemies.addAll(newEnemies);
     }
 }
-
-

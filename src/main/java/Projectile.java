@@ -6,16 +6,21 @@ import bagel.util.Vector2;
 
 public abstract class Projectile extends Sprite {
     private double damage;
+    private Image projectileImage;
 
     private Vector2 dirVec;
+
+    public Projectile(Point point, double damage) {
+        super(point);
+        this.damage = damage;
+    }
+
+    public abstract Projectile copy();
+
     public void setDirVec(Vector2 dirVec) {
         this.dirVec = dirVec;
     }
     public Vector2 getDirVec() {return dirVec;}
-    public Projectile(Point point, String imgSrc, double damage) {
-        super(point, new Image(imgSrc));
-        this.damage = damage;
-    }
 
     public void update() {
         super.update();

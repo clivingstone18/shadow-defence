@@ -1,3 +1,5 @@
+/* Adapted from project 1 solution package */
+
 package main.java;
 
 import bagel.Image;
@@ -6,11 +8,14 @@ import bagel.util.Vector2;
 
 import java.util.List;
 
-import static main.java.Map.polylinePoints;
-
 public class Slicer extends Sprite implements Attackable, Cloneable {
     private double speed;
     private int health;
+
+    public int getReward() {
+        return reward;
+    }
+
     private int reward;
     private int penalty;
     private int targetPointIndex;
@@ -25,8 +30,9 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         this.targetPointIndex = targetPointIndex;
     }
 
-    public Slicer(Image imgSrc, Point point) {
-        super(point, imgSrc);
+    public Slicer(Point point, List<Point> polylinePoints) {
+        super(point);
+        super.setImage(new Image("res/images/slicer.png"));
         this.polyline = polylinePoints;
         this.targetPointIndex = 1;
         this.finished = false;
@@ -52,10 +58,6 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         this.health = health;
     }
 
-    public int getReward() {
-        return reward;
-    }
-
     public void setReward(int reward) {
         this.reward = reward;
     }
@@ -66,18 +68,6 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
 
     public void setPenalty(int penalty) {
         this.penalty = penalty;
-    }
-
-    public List<Point> getPolyline() {
-        return polyline;
-    }
-
-    public void setPolyline(List<Point> polyline) {
-        this.polyline = polyline;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
     }
 
     public void update() {
@@ -114,31 +104,30 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         return finished;
     }
 
-    @Override
     public boolean isEliminated() {
         if (health <= 0) {
-            ShadowDefend.playerFunds += reward;
-
             return true;
         } else {
             return false;
         }
     }
 
-    @Override
-    public Slicer clone() {
-        try {
-            Slicer t = (Slicer)super.clone();
-            return t;
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public void setIsFinished(boolean finished) {
+        this.finished = finished;
     }
 
+    public boolean getIsFinished() {
+        return finished;
+    }
 
+    // Creates a copy of the slicer
+    public Slicer copy() {
+        Slicer copy = new Slicer(getCenter(), polyline);
+        copy.setTargetPointIndex(this.getTargetPointIndex());
+        copy.setIsFinished(this.getIsFinished());
+        return copy;
+    }
 
-    @Override
     public void reduceHealth(int towerDamage) {
         health -= towerDamage;
     }

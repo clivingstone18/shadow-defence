@@ -11,7 +11,7 @@ public class delayWave extends Wave {
     @Override
     public void Update() {
         if (current <= duration) {
-            current += ShadowDefend.getTimescale()/FPS;
+            current += ShadowDefend.timescaleMultiplier/FPS;
         } else {
             isHappening = false;
             hasCompleted = true;
@@ -28,12 +28,6 @@ public class delayWave extends Wave {
     }
 
 
-    public String toString() {
-        System.out.println("delay wave");
-        System.out.println(waveNo);
-        return null;
-    }
-
 
     @Override
     public boolean isHappening() {
@@ -49,7 +43,7 @@ public class delayWave extends Wave {
     }
 
     @Override
-    public boolean hasCompleted() {
+    public boolean hasFinished() {
         return hasCompleted;
     }
 

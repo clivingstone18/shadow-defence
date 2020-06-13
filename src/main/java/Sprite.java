@@ -23,6 +23,15 @@ public abstract class Sprite {
         this.image = imageSrc;
         this.rect = image.getBoundingBoxAt(point);
         this.angle = 0;
+        this.position = point;
+    }
+    public Sprite(Point point) {
+        this.angle = 0;
+        this.position = point;
+    }
+    public void setImage(Image image) {
+        this.image = image;
+        this.rect = image.getBoundingBoxAt(position);
     }
 
     public Image getImage() {
@@ -35,7 +44,6 @@ public abstract class Sprite {
     public void setRect(Rectangle rectangle) {
         rect = rectangle;
     }
-
 
     public void centerRectAt(Point point) {
         this.rect = image.getBoundingBoxAt(point);
@@ -69,14 +77,12 @@ public abstract class Sprite {
         return outOfWindow;
     }
 
-
+    //Checks if it doesn't overlap with images of the status and buy panel
     public boolean validRenderingPoint(Point point) {
-        return !ShadowDefend.buyPanel.inBoundingBoxRange(point) && !ShadowDefend.statusPanel.inBoundingBoxRange(point);
+        Panel buyPanel = new buyPanel(ShadowDefend.buyPanelBackground, ShadowDefend.buyPanelCenter);
+        Panel statusPanel = new statusPanel(ShadowDefend.statusPanelBackground, ShadowDefend.statusPanelCenter);
+        return !statusPanel.inBoundingBoxRange(point) && !buyPanel.inBoundingBoxRange(point);
     }
-
-    /**
-     * Updates the Sprite. Default behaviour is to render the Sprite at its current position.
-     */
 
     public void update() {
         if (validRenderingPoint(getCenter())) {
@@ -88,6 +94,4 @@ public abstract class Sprite {
             image.draw(point.x, point.y, new DrawOptions().setRotation(angle));
         }
     }
-
-
 }

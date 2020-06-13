@@ -1,14 +1,21 @@
 package main.java;
 
+import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
 public class TankProjectile extends Projectile {
     private double velocity;
 
-    public TankProjectile(Point point, String imgStr) {
-        super(point, imgStr,1);
+    public TankProjectile(Point point) {
+        super(point,1);
+        super.setImage(new Image("res/images/tank_projectile.png"));
         this.velocity = 10;
+    }
+
+    public Projectile copy() {
+        Projectile copy = new TankProjectile(this.getCenter());
+        return copy;
     }
 
     public void updateProjectile() {

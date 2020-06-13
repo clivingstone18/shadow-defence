@@ -8,7 +8,7 @@ import bagel.util.Point;
 
 import java.util.ArrayList;
 
-public class buyPanel extends Panel{
+public class buyPanel extends Panel {
     private double PIX;
     private ArrayList<purchaseItem> purchaseItems;
     private Font objFont = new Font("res/fonts/DejaVuSans-Bold.ttf", 20);
