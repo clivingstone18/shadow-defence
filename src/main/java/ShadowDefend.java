@@ -29,6 +29,9 @@ class ShadowDefend extends AbstractGame {
     private final int STARTING_LIVES = 25;
     private final int STARTING_FUNDS = 500;
     private final int STARTING_LEVEL = 1;
+    private final double BASE_AMOUNT = 150;
+    private final double MULT_FACTOR = 100;
+
     private int level;
     private Vector2 planeDir;
 
@@ -169,7 +172,7 @@ class ShadowDefend extends AbstractGame {
                 eventsToRemove.add(waveEvents.get(i));
                 // Verifies whether its the last event in the wave
                 if ((i + 1 == waveEvents.size() || waveEvents.get(i).getWaveNo() < waveEvents.get(i + 1).getWaveNo())) {
-                    playerFunds += 150 + waveEvents.get(i).getWaveNo() * 100;
+                    playerFunds += BASE_AMOUNT + waveEvents.get(i).getWaveNo() * MULT_FACTOR;
                     wavesFinished++;
                 }
                 // Checks whether a wave is in progress
