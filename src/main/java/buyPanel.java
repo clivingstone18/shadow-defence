@@ -9,7 +9,16 @@ import bagel.util.Point;
 import java.util.ArrayList;
 
 public class buyPanel extends Panel {
-    private double PIX;
+    private final double PIXFACTOR = 64;
+    private final double OFFSET = 10;
+    private final double ITEMDIST = 120;
+    private final double MONEYOFFSETX = 200;
+    private final double MONEYOFFSETY = 65;
+    private final double FONTOFFSET = 20;
+    private final String DOLLAR = "$";
+    private double pix;
+    private final Image panelBackground;
+    private final double MIDPOINT;
     private ArrayList<purchaseItem> purchaseItems;
     private Font objFont = new Font("res/fonts/DejaVuSans-Bold.ttf", 20);
     private Font keyBindFont = new Font("res/fonts/DejaVuSans-Bold.ttf", 14);
@@ -22,32 +31,34 @@ public class buyPanel extends Panel {
 
     public buyPanel(Image background, Point point) {
         super(background, point);
-        PIX = 64;
+        panelBackground = background;
+        MIDPOINT = background.getHeight()/2;
         purchaseItems = new ArrayList<>();
-        purchaseItems.add(new purchaseItem(new Tank(new Point(PIX,background.getHeight()/2 - 10),
+        purchaseItems.add(new purchaseItem(new Tank(new Point(PIXFACTOR,MIDPOINT - OFFSET),
                 new Image("res/images/tank.png"))));
-        purchaseItems.add(new purchaseItem(new superTank(new Point(PIX+120,background.getHeight()/2 - 10),
+        purchaseItems.add(new purchaseItem(new superTank(new Point(PIXFACTOR+ITEMDIST,MIDPOINT - OFFSET),
                 new Image("res/images/supertank.png"))));
-        purchaseItems.add(new purchaseItem(new Airplane(new Point(PIX+240, background.getHeight()/2 - 10),
+        purchaseItems.add(new purchaseItem(new Airplane(new Point(PIXFACTOR+ITEMDIST+ITEMDIST, MIDPOINT - OFFSET),
                 new Image("res/images/airsupport.png"))));
     }
 
     //renders the buy panel
     public void render(int playerFunds) {
-        PIX = 64;
+        pix = PIXFACTOR;
         super.getBackground().drawFromTopLeft(0,0);
         for (purchaseItem purchaseItem: purchaseItems) {
             Point point = purchaseItem.getTower().getCenter();
             purchaseItem.getTower().getImage().draw(point.x, point.y);
             purchaseItem.setColour(playerFunds);
             DrawOptions colour = new DrawOptions().setBlendColour(purchaseItem.getColour());
-            objFont.drawString("$" + String.valueOf(purchaseItem.getTower().getCost()), PIX-20,
-                    super.getBackground().getHeight() - 10, colour);
-            PIX += 120;
+            objFont.drawString(DOLLAR + String.valueOf(purchaseItem.getTower().getCost()),
+                    pix-FONTOFFSET,
+                    super.getBackground().getHeight() - OFFSET, colour);
+            pix += ITEMDIST;
         }
-        keyBindFont.drawString(keyBinds, super.getBackground().getWidth()/2, 20);
-        fundsFont.drawString("$" + String.valueOf(playerFunds), Window.getWidth()-200,
-                super.getBackground().getHeight() - 30);
+        keyBindFont.drawString(keyBinds, super.getBackground().getWidth()/2, FONTOFFSET);
+        fundsFont.drawString(DOLLAR + String.valueOf(playerFunds), Window.getWidth()-MONEYOFFSETX,
+                MONEYOFFSETY);
     }
  
 }

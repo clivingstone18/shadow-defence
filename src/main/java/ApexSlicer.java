@@ -3,7 +3,6 @@ package main.java;
 import bagel.Image;
 import bagel.util.Point;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApexSlicer extends MegaSlicer {

@@ -15,10 +15,6 @@ public abstract class Panel {
         this.rect = background.getBoundingBoxAt(position);
     }
 
-    public Rectangle getRect() {
-        return rect;
-    }
-
     public Image getBackground() {
         return background;
     }
@@ -30,7 +26,7 @@ public abstract class Panel {
     public boolean inBoundingBoxRange(Point point) {
         boolean validX = (point.x >= rect.left()) && (point.x <= rect.right());
         boolean validY = (point.y >= rect.top()) && (point.y <= rect.bottom());
-        //check if cliced within bounding box
+        //check if clicked within bounding box
         return validX && validY;
     }
 

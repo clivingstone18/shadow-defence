@@ -6,7 +6,8 @@ public class delayWave extends Wave {
     private double current;
     private boolean isHappening;
     private boolean hasCompleted;
-    private double FPS = 60;
+    private final double FPS = 60;
+    private final double FACTOR = 1000;
 
     @Override
     public void Update() {
@@ -19,7 +20,7 @@ public class delayWave extends Wave {
     }
 
     public delayWave(double duration, int WaveNo) {
-        this.duration = duration/1000;
+        this.duration = duration/FACTOR;
         this.waveNo = WaveNo;
     }
 

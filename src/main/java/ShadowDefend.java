@@ -24,8 +24,12 @@ class ShadowDefend extends AbstractGame {
     private int wavesFinished;
     private boolean itemSelected;
     private Tower selectedTower;
-    private Vector2 horizontal = new Vector2(1, 0);
-    private Vector2 vertical = new Vector2(0, 1);
+    private final Vector2 horizontal = new Vector2(1, 0);
+    private final Vector2 vertical = new Vector2(0, 1);
+    private final int STARTING_LIVES = 25;
+    private final int STARTING_FUNDS = 500;
+    private final int STARTING_LEVEL = 1;
+    private int level;
     private Vector2 planeDir;
 
     private List<Wave> waveEvents;
@@ -43,23 +47,6 @@ class ShadowDefend extends AbstractGame {
 
     public static double getTimescale() {
         return timescaleMultiplier;
-    }
-
-
-    public int getPlayerFunds() {
-        return playerFunds;
-    }
-
-    public void setPlayerFunds(int playerFunds) {
-        this.playerFunds = playerFunds;
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public void setLives(int lives) {
-        this.lives = lives;
     }
 
 
@@ -245,12 +232,12 @@ class ShadowDefend extends AbstractGame {
     public void initialise(int level) {
         map = new Map(level);
         polyline = map.getPolylinePoints();
-        playerFunds = 5000;
-        //read in files
         currWaveIndex = 0;
         currWaveCount = 1;
         timescaleMultiplier = 1;
-        lives = 500;
+        level = STARTING_LEVEL;
+        lives = STARTING_LIVES;
+        playerFunds = STARTING_FUNDS;
         waveEvents = readWaveEvents("res/levels/waves.txt");
         activeTowers = new ArrayList<>();
         activeEnemies = new ArrayList<>();
@@ -270,7 +257,8 @@ class ShadowDefend extends AbstractGame {
     public void updateStatus() {
         if (lives > 0 && wavesFinished == totalWaves && activeEnemies.size()==0) {
             status = "Winner!";
-            initialise(2);
+            level++;
+            initialise(level);
         }
         else if (lives <= 0) {
             Window.close();
@@ -313,7 +301,7 @@ class ShadowDefend extends AbstractGame {
     }
 
     public ShadowDefend() {
-        initialise(1);
+        initialise(STARTING_LEVEL);
     }
 
     public static void main(String[] args) {
