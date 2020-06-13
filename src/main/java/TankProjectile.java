@@ -2,7 +2,6 @@ package main.java;
 
 import bagel.Image;
 import bagel.util.Point;
-import bagel.util.Vector2;
 
 public class TankProjectile extends Projectile {
     private final double VELOCITY = 10;
@@ -14,10 +13,18 @@ public class TankProjectile extends Projectile {
         super.setImage(new Image("res/images/tank_projectile.png"));
     }
 
-    public Projectile copy() {
-        Projectile copy = new TankProjectile(this.getCenter());
+    /**
+     * Creates a deep clone of the tank projectile
+     * @return a deep clone of the tank projectile
+     */
+    public TankProjectile copy() {
+        TankProjectile copy = new TankProjectile(this.getCenter());
         return copy;
     }
+
+    /**
+     * Updates the movement of the projectile
+     */
 
     public void updateProjectile() {
         super.move(super.getDirVec().normalised().mul(VELOCITY * ShadowDefend.getTimescale()));

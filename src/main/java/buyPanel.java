@@ -42,7 +42,10 @@ public class buyPanel extends Panel {
                 new Image("res/images/airsupport.png"))));
     }
 
-    //renders the buy panel
+    /**
+     * Renders the buy panel
+     * @param playerFunds
+     */
     public void render(int playerFunds) {
         pix = PIXFACTOR;
         super.getBackground().drawFromTopLeft(0,0);

@@ -38,9 +38,6 @@ public abstract class Sprite {
         return image;
     }
 
-    public Rectangle getRect() {
-        return new Rectangle(rect);
-    }
     public void setRect(Rectangle rectangle) {
         rect = rectangle;
     }
@@ -61,9 +58,11 @@ public abstract class Sprite {
         this.angle = angle;
     }
 
-    public void setPosition(Point position) {
-        this.position = position;
-    }
+    /**
+     * Returns whether a point is in the bounding box of the sprite
+     * @param point
+     * @return whether a point is in the bounding box of the sprite
+     */
 
     public boolean inBoundingBoxRange(Point point) {
         boolean validX = (point.x >= rect.left()) && (point.x <= rect.right());
@@ -72,18 +71,29 @@ public abstract class Sprite {
         return validX && validY;
     }
 
+    /**
+     * Returns whether the Sprite is out of bounds
+     * @return whether the Sprite is out of bounds
+     */
     public boolean outOfBounds() {
         boolean outOfWindow = ((this.getCenter().x > Window.getWidth()-1)  || (this.getCenter().y -1 > Window.getHeight()));
         return outOfWindow;
     }
 
-    //Checks if it doesn't overlap with images of the status and buy panel
+    /**
+     * Checks whether the sprite intersects with the buy/status panel (rendering it an invalid position)
+     * @param point
+     * @return whether the sprite intersects with the buy/status panel
+     */
     public boolean validRenderingPoint(Point point) {
         Panel buyPanel = new buyPanel(ShadowDefend.buyPanelBackground, ShadowDefend.buyPanelCenter);
         Panel statusPanel = new statusPanel(ShadowDefend.statusPanelBackground, ShadowDefend.statusPanelCenter);
         return !statusPanel.inBoundingBoxRange(point) && !buyPanel.inBoundingBoxRange(point);
     }
 
+    /** Updates the position of the sprite
+     * Default behaviour is to update it at its current position, otherwise at point provided
+     */
     public void update() {
         if (validRenderingPoint(getCenter())) {
             image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));

@@ -3,7 +3,6 @@ import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Tank extends Tower {
@@ -11,17 +10,32 @@ public class Tank extends Tower {
     private double timeElapsed;
     private final int FPS = 60;
     private boolean activeProjectile;
-
-    private final int TANK_EFFECT_RADIUS = 100;
-    private final int DAMAGE = 1;
-    private final int COST = 250;
-    private final double COOLDOWN = 1000;
-
     private Slicer currTarget;
 
-    private List<Slicer> viableEnemies;
+    private final int TANK_EFFECT_RADIUS = 100;
+    private final int TANK_DAMAGE = 1;
+    private final int TANK_COST = 250;
+    private final double TANK_COOLDOWN = 1000;
 
-    // Creates a deep copy of the tank
+    // Setter Methods
+
+    public void setCooldown(int cooldown) {
+        this.cooldown = cooldown;
+    }
+    public void setActiveProjectile(boolean activeProjectile) {
+        this.activeProjectile = activeProjectile;
+    }
+    public void setCooldown(double cooldown) {
+        this.cooldown = cooldown;
+    }
+
+
+
+    /**
+     * Creates a deep clone of the tank
+     * @return a deep clone of the tank
+     */
+
     public Tank copy() {
         Tank copy = new Tank(this.getCenter(), this.getImage());
         copy.setCost(this.getCost());
@@ -37,20 +51,20 @@ public class Tank extends Tower {
     public Tank(Point point, Image imageSrc) {
         super(point, imageSrc);
         super.setEffectRadius(TANK_EFFECT_RADIUS);
-        super.setDamage(DAMAGE);
-        super.setCost(COST);
+        super.setDamage(TANK_DAMAGE);
+        super.setCost(TANK_COST);
         super.setProjectile(new TankProjectile(super.getCenter()));
-        cooldown = COOLDOWN;
+        cooldown = TANK_COOLDOWN;
         activeProjectile = false;
         timeElapsed = 0;
-        viableEnemies = new ArrayList<>();
         currTarget = null;
     }
 
-    public void setCooldown(int cooldown) {
-        this.cooldown = cooldown;
-    }
-
+    /**
+     * Identifies a feasible target (within effect radius)
+     * Selects the closest one
+     * @param activeEnemies
+     */
     public void identifyTarget(List<Slicer> activeEnemies) {
         double shortestDistance = super.getEffectRadius();
         timeElapsed += ShadowDefend.getTimescale() / FPS;
@@ -81,14 +95,18 @@ public class Tank extends Tower {
         }
     }
 
-    // Updates the position projectile(s) currently aimed at a target
+    /**
+     *  Updates the position of the projectile(s) currently aimed at a target
+     */
     public void updateAllProjectiles(){
         if (activeProjectile) {
             super.getProjectile().updateProjectile();
         }
     }
 
-    // Projectiles do damage to target in the range
+    /**
+     * / Projectiles do damage to target in the range
+     */
     public void HitTarget() {
         if (activeProjectile) {
             if (currTarget.inBoundingBoxRange(super.getProjectile().getCenter())) {
@@ -99,14 +117,6 @@ public class Tank extends Tower {
                 currTarget = null;
             }
         }
-    }
-
-    public void setActiveProjectile(boolean activeProjectile) {
-        this.activeProjectile = activeProjectile;
-    }
-
-    public void setCooldown(double cooldown) {
-        this.cooldown = cooldown;
     }
 
 }

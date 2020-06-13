@@ -3,13 +3,11 @@ package main.java;
 import bagel.Image;
 import bagel.util.Point;
 
-public abstract class Tower<T extends Tower> extends Sprite {
+public abstract class Tower extends Sprite {
     private int effectRadius;
     private int damage;
     private int cost;
     private Projectile projectile;
-
-    public abstract T copy();
 
     public Tower(Point point, Image imageSrc) {
         super(point, imageSrc);
@@ -17,10 +15,6 @@ public abstract class Tower<T extends Tower> extends Sprite {
 
     public void setProjectile(Projectile projectile) {
         this.projectile = projectile;
-    }
-
-    public void update() {
-        super.update();
     }
 
     public Projectile getProjectile() {
@@ -43,13 +37,15 @@ public abstract class Tower<T extends Tower> extends Sprite {
         return effectRadius;
     }
 
-    public int getDamage() {return damage;}
+    public int getDamage() {
+        return damage;
+    }
 
     public int getCost() {
         return cost;
     }
 
-
+    public abstract Tower copy();
     public abstract void updateAllProjectiles();
 
 }

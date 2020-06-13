@@ -30,6 +30,10 @@ public class Airplane extends Tower {
         return (this.outOfBounds() && numDropped == numDetonated);
     }
 
+    /**
+     * Performs a deep clone of the airplane
+     * @return copy of the airplane
+     */
     public Airplane copy() {
         Airplane copy = new Airplane(this.getCenter(), this.getImage());
         return copy;
@@ -48,12 +52,18 @@ public class Airplane extends Tower {
         this.dropTime = generateDropTime();
     }
 
+    /**
+     * Generates a drop time from 1-2s
+     * @return
+     */
     public double generateDropTime() {
         return LOWERLIMTIME + (Math.random() * ((UPPERLIMTIME - LOWERLIMTIME) + 1));
 
     }
 
-    // Sets the point from where the airplane begins its path, based on its direction
+    /**
+     * Sets the point from where the airplane begins its path, based on its direction
+     */
     public void setSpawnPoint() {
         if (this.dirVec.y == 0) {
             super.centerRectAt(new Point(-1*OUTER_OFFSET, super.getCenter().y));
@@ -63,7 +73,9 @@ public class Airplane extends Tower {
         }
     }
 
-    // Sets the angle of the plane
+    /**
+     * Sets the angle of the plane
+      */
     public void setDir(Vector2 dirVec) {
         this.dirVec = dirVec;
         // Travelling horizontally
@@ -74,6 +86,10 @@ public class Airplane extends Tower {
             setAngle(Math.PI/2);
         }
     }
+
+    /**
+     * Drops explosives if timing is appropriate
+     */
 
     public void dropExplosives() {
         // Updates the time elapsed for each of the explosives
@@ -99,8 +115,11 @@ public class Airplane extends Tower {
 
     }
 
-    // Does damage to each of the targets
-    public void destroyTargets(List<Slicer> activeEnemies) {
+    /**
+     * Performs damage to each of the targets
+     * @param activeEnemies
+     */
+    public void damageTargets(List<Slicer> activeEnemies) {
         // Create list of explosives that have been detonated (regardless of they have hit enemies)
         // These explosives will be removed from the map
         List<Explosive> detExp = new ArrayList<>();
@@ -118,17 +137,22 @@ public class Airplane extends Tower {
                 }
             }
         }
+        // Removes all explosives that have detonated
         explosives.removeAll(detExp);
     }
 
-    // Renders the explosives on the map
+    /**
+     * Renders the explosives on the map
+     */
     public void updateAllProjectiles() {
         for (Explosive explosive: explosives) {
             explosive.update();
         }
     }
 
-    // Updates the position of the airplane
+    /**
+     * Updates the position of the airplane
+     */
     public void update() {
         if (!outOfBounds()) {
             super.move(dirVec.mul(ShadowDefend.getTimescale() * speed));

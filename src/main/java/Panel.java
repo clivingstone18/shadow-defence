@@ -23,10 +23,14 @@ public abstract class Panel {
         return position;
     }
 
+    /**
+     * Determines whether a point (user's cursor) is in the bounding box of the panel
+     * @param point
+     * @return whether a point (user's cursor) is in the bounding box of the panel
+     */
     public boolean inBoundingBoxRange(Point point) {
         boolean validX = (point.x >= rect.left()) && (point.x <= rect.right());
         boolean validY = (point.y >= rect.top()) && (point.y <= rect.bottom());
-        //check if clicked within bounding box
         return validX && validY;
     }
 

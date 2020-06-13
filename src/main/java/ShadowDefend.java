@@ -51,7 +51,11 @@ class ShadowDefend extends AbstractGame {
     }
 
 
-    //reads the waves from the text file
+    /**
+     * Reads in a file containing spawn and wave delay events
+     * @param filename
+     * @return list of spawn and delay wave events provided in the file
+     */
     public List<Wave> readWaveEvents(String filename) {
         waveEvents = new ArrayList<>();
         try {
@@ -62,15 +66,15 @@ class ShadowDefend extends AbstractGame {
                 String[] dataArr = data.split(",");
                 int waveNo = Integer.parseInt(dataArr[0]);
                 totalWaves = waveNo;
-                //creates new spawning event
+                // Creation of a new spawn event
                 if (dataArr[1].equals("spawn")) {
                     int slicerCount = Integer.parseInt(dataArr[2]);
-                    String enemyType = dataArr[3];
+                    String slicerType = dataArr[3];
                     int delay = Integer.parseInt(dataArr[4]);
-                    spawnWave spawnWave = new spawnWave(waveNo, slicerCount, enemyType, delay, polyline);
+                    spawnWave spawnWave = new spawnWave(waveNo, slicerCount, slicerType, delay, polyline);
                     waveEvents.add(spawnWave);
                 }
-                //creates new delay event
+                // Creates a new delay event
                 else {
                     int delay = Integer.parseInt(dataArr[2]);
                     delayWave delayWave = new delayWave(delay / timescaleMultiplier, waveNo);
@@ -85,6 +89,9 @@ class ShadowDefend extends AbstractGame {
         return waveEvents;
     }
 
+    /**
+     * Switches the direction of the plane
+     */
     public void switchPlaneDirVec() {
         if (planeDir.equals(HORIZONTAL)) {
             planeDir = VERTICAL;
@@ -93,6 +100,13 @@ class ShadowDefend extends AbstractGame {
         }
     }
 
+    /**
+     * Returns whether a Tower can be released at the provided point
+     * The sprite must not be on either of the panels, must not be on a blocked tile, and must not overlap
+     * with another tower
+     * @param point
+     * @return  whether a Sprite (game object) can be released at the provided point
+     */
     public boolean ValidReleasePoint(Point point) {
         return !buyPanel.inBoundingBoxRange(point) && !statusPanel.inBoundingBoxRange(point)
                 && pointInMap(point) &&
@@ -100,11 +114,20 @@ class ShadowDefend extends AbstractGame {
                 !inTowerRange(point);
     }
 
+    /**
+     * Returns whether a point exists within the map
+     * @param point
+     * @return whether a point exists within the map
+     */
     public boolean pointInMap(Point point) {
         return (point.x >= 0 && point.x<=Window.getWidth() && point.y >=0 && point.y<=Window.getHeight());
     }
 
-    // Returns whether another tower is in the way of a new tower
+    /**
+     * Returns whether the user's hover point is intersecting with another tower
+     * @param point
+     * @return whether the user's hover point is intersecting
+     */
     public boolean inTowerRange(Point point) {
         for (Tower tower: activeTowers) {
             if (tower.inBoundingBoxRange(point)) {
@@ -113,6 +136,11 @@ class ShadowDefend extends AbstractGame {
         }
         return false;
     }
+
+    /**
+     * Performs the placement of a new tower clicked by the user
+     * @param input
+     */
 
     public void placeTowers(Input input) {
         //checks what happens if left clicked
@@ -162,6 +190,9 @@ class ShadowDefend extends AbstractGame {
         }
     }
 
+    /**
+     * Updates all of the waves currently in progress
+     */
     public void updateWaves() {
         // Tracks the waves
         List<Wave> eventsToRemove = new ArrayList<>();
@@ -196,20 +227,22 @@ class ShadowDefend extends AbstractGame {
         waveEvents.removeAll(eventsToRemove);
     }
 
-    // Updates the towers currently on the map
+    /**
+     * Updates the towers that are currently in action
+     */
     public void updateTowers() {
         List<Airplane> finishedAirplanes = new ArrayList<>();
         for (int i = 0; i < activeTowers.size(); i++) {
             Tower tower = activeTowers.get(i);
             if (tower instanceof Tank) {
                 Tank tank = (Tank) tower;
-                tank.identifyTarget(getActiveEnemies());
+                tank.identifyTarget(getActiveSlicers());
                 tank.HitTarget();
             }
             else if (tower instanceof Airplane) {
                 Airplane airplane = (Airplane) tower;
                 airplane.dropExplosives();
-                airplane.destroyTargets(getActiveEnemies());
+                airplane.damageTargets(getActiveSlicers());
                 if (airplane.isFinished()) {
                     finishedAirplanes.add(airplane);
                 }
@@ -220,21 +253,27 @@ class ShadowDefend extends AbstractGame {
         activeTowers.removeAll(finishedAirplanes);
     }
 
-    //Returns all the slicers currently on the map
-    public List<Slicer> getActiveEnemies() {
-        List<Slicer> activeEnemies = new ArrayList<>();
+    /**
+     * Returns a list of all active slicers
+     * @return a list of all active slicers
+     */
+    public List<Slicer> getActiveSlicers() {
+        List<Slicer> activeSlicers = new ArrayList<>();
         for (int i = 0; i < waveEvents.size(); i++) {
             if (waveEvents.get(i) instanceof spawnWave) {
                 spawnWave wave = (spawnWave) waveEvents.get(i);
                 if (waveEvents.get(i).isHappening()) {
-                    activeEnemies.addAll(wave.getActiveSlicers());
+                    activeSlicers.addAll(wave.getActiveSlicers());
                 }
             }
         }
-        return activeEnemies;
+        return activeSlicers;
     }
 
-    // Update timescale multiplier from user input
+    /**
+     * Updates the timescale multiplier from the user input
+     * @param input
+     */
     public void updateTimescale(Input input) {
         if (input.wasPressed(Keys.K) || input.wasPressed(Keys.L)) {
             if (input.wasPressed(Keys.L)) {
@@ -247,8 +286,11 @@ class ShadowDefend extends AbstractGame {
         }
     }
 
+    /**
+     * Initialises the game at the provided level (needed to change maps)
+     * @param level
+     */
 
-    // Initialises the game at the provided level
     public void initialise(int level) {
         map = new Map(level);
         polyline = map.getPolylinePoints();
@@ -271,8 +313,11 @@ class ShadowDefend extends AbstractGame {
         waveStarted = false;
     }
 
+    /**
+     * Updates the status of the game (rendered on the status panel)
+     */
     public void updateStatus() {
-        if (lives > 0 && wavesFinished == totalWaves && getActiveEnemies().size()==0) {
+        if (lives > 0 && wavesFinished == totalWaves && getActiveSlicers().size()==0) {
             status = "Winner!";
             level++;
             initialise(level);
@@ -291,7 +336,10 @@ class ShadowDefend extends AbstractGame {
         }
     }
 
-
+    /**
+     * Update method called every frame
+     * @param input
+     */
     @Override
     protected void update(Input input) {
         updateStatus();

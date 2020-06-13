@@ -8,14 +8,9 @@ import bagel.util.Vector2;
 
 import java.util.List;
 
-public class Slicer extends Sprite implements Attackable, Cloneable {
+public class Slicer extends Sprite implements Attackable {
     private double speed;
     private int health;
-
-    public int getReward() {
-        return reward;
-    }
-
     private int reward;
     private int penalty;
     private int targetPointIndex;
@@ -33,21 +28,8 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         return targetPointIndex;
     }
 
-    public void setTargetPointIndex(int targetPointIndex) {
-        this.targetPointIndex = targetPointIndex;
-    }
-
-    public Slicer(Point point, List<Point> polylinePoints) {
-        super(point);
-        this.polyline = polylinePoints;
-        this.targetPointIndex = 1;
-        this.finished = false;
-        this.speed = SLICER_SPEED;
-        this.health = SLICER_HEALTH;
-        this.reward = SLICER_REWARD;
-        this.penalty = SLICER_PENALTY;
-        this.image = new Image(IMG_STR);
-        super.setImage(image);
+    public int getReward() {
+        return reward;
     }
 
     public double getSpeed() {
@@ -78,6 +60,35 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         this.penalty = penalty;
     }
 
+    public void setTargetPointIndex(int targetPointIndex) {
+        this.targetPointIndex = targetPointIndex;
+    }
+
+    public void setIsFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean getIsFinished() {
+        return finished;
+    }
+
+
+    public Slicer(Point point, List<Point> polylinePoints) {
+        super(point);
+        this.polyline = polylinePoints;
+        this.targetPointIndex = 1;
+        this.finished = false;
+        this.speed = SLICER_SPEED;
+        this.health = SLICER_HEALTH;
+        this.reward = SLICER_REWARD;
+        this.penalty = SLICER_PENALTY;
+        this.image = new Image(IMG_STR);
+        super.setImage(image);
+    }
+
+    /**
+     * Updates the slicer - its position and angle
+     */
     public void update() {
         if (finished) {
             return;
@@ -102,7 +113,6 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
                 targetPointIndex += 1;
             }
         }
-
         super.move(distance.normalised().mul(speed * ShadowDefend.getTimescale()));
         super.setAngle(Math.atan2(targetPoint.y - currentPoint.y, targetPoint.x - currentPoint.x));
         super.update();
@@ -119,16 +129,10 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
             return false;
         }
     }
-
-    public void setIsFinished(boolean finished) {
-        this.finished = finished;
-    }
-
-    public boolean getIsFinished() {
-        return finished;
-    }
-
-    // Creates a copy of the slicer
+    /**
+     * Creates a deep clone of the slicer
+     * @return a clone of the slicer
+     */
     public Slicer copy() {
         Slicer copy;
         if (this instanceof SuperSlicer) {
@@ -144,6 +148,11 @@ public class Slicer extends Sprite implements Attackable, Cloneable {
         copy.setIsFinished(this.getIsFinished());
         return copy;
     }
+
+    /**
+     * Inflicts damage to the slicer by reducing its health
+     * @param towerDamage
+     */
 
     public void reduceHealth(int towerDamage) {
         health -= towerDamage;

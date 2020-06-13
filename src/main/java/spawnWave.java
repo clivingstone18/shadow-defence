@@ -7,17 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class spawnWave extends Wave {
-    private boolean isHappening;
-    private int waveNo;
     private int slicerCount;
     private int spawnedSlicers;
     private int slicersCompleted;
     private int frameCount;
     private String enemyType;
     private double delay;
-    private boolean hasFinished;
-    private double currTime;
-    private double duration;
     private int childSlicers;
     private List<Point> polyline;
     private int penaltiesIncurred;
@@ -27,18 +22,6 @@ public class spawnWave extends Wave {
 
     private List<Slicer> activeSlicers;
 
-    public double getDuration() {
-        return duration;
-    }
-
-    public double getCurrTime() {
-        return currTime;
-    }
-    
-    public int getWaveNo() {
-        return waveNo;
-    }
-
     public int getPenaltiesIncurred() {
         return penaltiesIncurred;
     }
@@ -47,29 +30,32 @@ public class spawnWave extends Wave {
         return rewards;
     }
 
-
-    //constructors
-    public spawnWave(int waveNo, int slicerCount, String enemyType, double delay, List<Point> polyline) {
-        this.waveNo = waveNo;
+    /**
+     * Sets off the wave
+     * @param waveNo
+     * @param slicerCount
+     * @param enemyType
+     * @param delay
+     * @param polyline
+     */
+     public spawnWave(int waveNo, int slicerCount, String enemyType, double delay, List<Point> polyline) {
+        super.setWaveNo(waveNo);
         this.slicerCount = slicerCount;
         this.enemyType = enemyType;
         this.delay = delay / 1000;
         this.frameCount = 0;
-        this.isHappening = false;
-        this.duration = (slicerCount - 1) * this.delay;
+        super.setHappening(false);
+        super.setDuration((slicerCount - 1) * this.delay);
         this.childSlicers = 0;
         this.polyline = polyline;
         this.newEnemies = new ArrayList<>();
     }
 
-    public boolean isHappening() {
-        return isHappening;
-    }
-
-    public boolean hasFinished() {
-        return hasFinished;
-    }
-
+    /**
+     * Returns the type of slicer in the wave
+     * @param type
+     * @return the type of slicer in the wave
+     */
     public Slicer slicerOfType(String type) {
         Point init = polyline.get(0);
         if (type.equals("slicer")) {
@@ -83,32 +69,37 @@ public class spawnWave extends Wave {
         }
     }
 
-    //starts the wave of the game
+    /**
+     * Sets off the wave
+     */
     public void Start() {
         activeSlicers = new ArrayList<>();
         Slicer newSlicer = slicerOfType(enemyType);
         activeSlicers.add(newSlicer);
-        this.isHappening = true;
+        super.setHappening(true);
         this.spawnedSlicers = 1;
-        this.hasFinished = false;
-        this.currTime = 0;
+        super.setHasFinished(false);
+        super.setCurrTime(0);
         newEnemies.add(newSlicer);
     }
 
+    /**
+     * Updates the wave - updates the slicers (existing and new) and their states (whether they are eliminated / have
+     * finished the map)
+     */
     @Override
     public void Update() {
         List<Slicer> newEnemies = new ArrayList<>();
-
         penaltiesIncurred = 0;
         rewards = 0;
         if (slicersCompleted == slicerCount + childSlicers) {
-            hasFinished = true;
+            setHasFinished(true);
             return;
         }
 
         frameCount += ShadowDefend.getTimescale();
-        currTime += ShadowDefend.timescaleMultiplier / FPS;
-        //checks for new slicers
+        setCurrTime(getCurrTime() + ShadowDefend.timescaleMultiplier / FPS);
+        // Checks whether new slicers are ready to be spawned
         for (int i = 0; i < activeSlicers.size(); i++) {
             if (frameCount / FPS >= delay && spawnedSlicers != slicerCount) {
                 Slicer newSlicer = slicerOfType(enemyType);
@@ -131,13 +122,13 @@ public class spawnWave extends Wave {
                 slicersCompleted++;
                 rewards += activeSlicers.get(i).getReward();
             }
-            //Checks if slicer is finished
+            // Checks if slicer is finished
             else if (activeSlicers.get(i).isFinished()) {
                 slicersCompleted++;
                 toDelete.add(activeSlicers.get(i));
                 penaltiesIncurred += activeSlicers.get(i).getPenalty();
             }
-            //Just update the slicer's position
+            // Update the slicer's position
             else {
                 activeSlicers.get(i).update();
             }

@@ -12,6 +12,9 @@ public class Explosive extends Projectile {
     private final String IMG_FILE = "res/images/explosive.png";
     private final int EFFECT_RADIUS = 200;
 
+    /**
+     * Updates the time that it spends on the map
+     */
     public void increaseTime() {
         detTime += ShadowDefend.getTimescale()/60;
     }
@@ -26,13 +29,21 @@ public class Explosive extends Projectile {
         detTime = 0;
     }
 
-    public Projectile copy() {
-        Projectile copy = new Explosive(this.getCenter());
+    /**
+     * Creates a deep copy of the explosive
+     */
+    public Explosive copy() {
+        Explosive copy = new Explosive(this.getCenter());
         return copy;
     }
+
+    /**
+     * Updates the position of the projectile on the map
+     */
     public void updateProjectile() {
         super.update();
     }
+
     public double getDetTime() {
         return detTime;
     }

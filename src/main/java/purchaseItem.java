@@ -1,12 +1,13 @@
 package main.java;
-import bagel.Image;
 import bagel.util.Colour;
-import bagel.util.Rectangle;
 
 class purchaseItem {
     private Colour colour;
-    private boolean sufficientFunds;
     private Tower tower;
+
+    /**
+     *     Sets the colour of the item based on user's funds
+     */
 
     public void setColour(int userFunds) {
         if (userFunds >= tower.getCost()) {

@@ -1,61 +1,29 @@
 package main.java;
 
 public class delayWave extends Wave {
-    private int waveNo;
-    private double duration;
-    private double current;
-    private boolean isHappening;
-    private boolean hasCompleted;
+    private final double TIME_FACTOR = 1000;
     private final double FPS = 60;
-    private final double FACTOR = 1000;
+
+    public delayWave(double duration, int waveNo) {
+        super.setDuration(duration / TIME_FACTOR);
+        super.setWaveNo(waveNo);
+    }
 
     @Override
     public void Update() {
-        if (current <= duration) {
-            current += ShadowDefend.timescaleMultiplier/FPS;
+        if (super.getCurrTime() <= super.getDuration()) {
+            super.setCurrTime(super.getCurrTime()+ShadowDefend.timescaleMultiplier/FPS);
         } else {
-            isHappening = false;
-            hasCompleted = true;
+            super.setHappening(false);
+            super.setHasFinished(true);
         }
-    }
-
-    public delayWave(double duration, int WaveNo) {
-        this.duration = duration/FACTOR;
-        this.waveNo = WaveNo;
-    }
-
-    public int getWaveNo() {
-        return waveNo;
-    }
-
-
-
-    @Override
-    public boolean isHappening() {
-        return isHappening;
     }
 
     @Override
     public void Start() {
-        isHappening = true;
-        current = 0;
-        hasCompleted = false;
-
-    }
-
-    @Override
-    public boolean hasFinished() {
-        return hasCompleted;
-    }
-
-    @Override
-    public double getDuration() {
-        return duration;
-    }
-
-    @Override
-    public double getCurrTime() {
-        return current;
+        setHappening(true);
+        setCurrTime(0);
+        setHasFinished(false);
     }
 
 }

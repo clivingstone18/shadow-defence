@@ -13,8 +13,8 @@ public class SuperTankProjectile extends TankProjectile {
         setDamage(getDamage()*SPEED_FACTOR);
     }
 
-    public Projectile copy() {
-        Projectile copy = new SuperTankProjectile(this.getCenter());
+    public SuperTankProjectile copy() {
+        SuperTankProjectile copy = new SuperTankProjectile(this.getCenter());
         return copy;
     }
 

@@ -21,6 +21,12 @@ public class statusPanel extends Panel {
         super(backgroundImg, point);
     }
 
+    /**
+     * Renders the status panel
+     * @param waveNo
+     * @param status
+     * @param lives
+     */
     public void render(int waveNo, String status, int lives) {
         pix = 0;
         super.getBackground().draw(super.getPosition().x, super.getPosition().y);
